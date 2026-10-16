@@ -2,8 +2,8 @@
 <html lang="de">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data: https://*.supabase.co; base-uri 'none'; form-action 'none'">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#52b7c1">
@@ -60,7 +60,7 @@ h1,h2,h3{font-family:var(--font-head);letter-spacing:-.01em;color:var(--blau);ma
 .btn:hover{background:var(--tuerkis-10);border-color:var(--tuerkis)}
 .btn.primary{background:var(--blau);border-color:var(--blau);color:var(--weiss)}
 .btn.primary:hover{background:#3a4d60}
-.btn.small{padding:6px 11px;font-size:12px}
+.btn.small{min-height:36px;padding:6px 12px;font-size:12.5px}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn:focus-visible,.btn-ghost:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .msg{font:14px/1.5 var(--font-head);color:var(--text-2);margin-top:12px}
@@ -72,8 +72,6 @@ h1,h2,h3{font-family:var(--font-head);letter-spacing:-.01em;color:var(--blau);ma
 .kpi strong{display:block;font:800 26px/1.05 var(--font-head);color:var(--blau)}
 .kpi span{display:block;margin-top:4px;font:600 12px/1.25 var(--font-head);color:var(--muted)}
 
-.toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;margin:22px 0 10px}
-.create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
 .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--blau-25);border-radius:999px;padding:0 14px;min-height:42px}
 .search input{width:100%;border:0;background:transparent;outline:0;font:14px var(--font-head);min-height:40px}
 .search:focus-within{border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.22)}
@@ -109,8 +107,55 @@ footer.foot{background:var(--blau);color:#cfd6dc;font:12.5px/1.5 var(--font-head
 footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 footer.foot a{color:#fff}footer.foot a:hover{color:var(--gold)}
 
-@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr}}
-@media(max-width:640px){.wrap{padding:0 16px 48px}.hero-inner{padding:18px 16px 30px}.logo{height:38px}.bar-inner{padding:10px 16px}.subline{margin-left:.6em}.panel{padding:16px}.row,.create{grid-template-columns:1fr}.link-row{grid-template-columns:1fr 1fr}.link-row input{grid-column:1/-1}}
+
+.create-panel h2{font-size:1.05rem;margin-bottom:10px}
+.create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:22px 0 12px}
+.toolbar .search{flex:1 1 260px}
+.search svg{width:18px;height:18px;color:var(--muted);flex:none}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px;min-width:0;flex:0 1 auto}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;display:inline-flex;align-items:center;gap:7px;min-height:40px;border:1px solid var(--blau-25);background:var(--surface);color:var(--blau);border-radius:999px;padding:6px 13px;font:700 12.5px var(--font-head)}
+.chip:hover{border-color:var(--tuerkis)}
+.chip[aria-pressed="true"]{background:var(--blau);border-color:var(--blau);color:#fff}
+.chip .d{width:9px;height:9px;border-radius:50%}
+.sort select{min-height:42px;border-radius:999px;padding:8px 14px;font-weight:600}
+.pill.img{border:0;cursor:pointer;background:var(--tuerkis-10);color:var(--tuerkis-dark)}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,190px),1fr));gap:12px}
+.img-card{border:1px solid var(--grid);border-radius:12px;overflow:hidden;background:#fff;display:flex;flex-direction:column}
+.img-card img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block;background:var(--blau-10)}
+.img-body{padding:10px 12px 12px;display:grid;gap:5px;font:12.5px/1.4 var(--font-head);color:var(--text-2)}
+.img-body strong{color:var(--blau);font-size:13px}
+.badge{display:inline-flex;width:max-content;max-width:100%;border-radius:999px;padding:3px 10px;font:700 11.5px/1.3 var(--font-head)}
+.badge.ok{background:#e3f1e8;color:#1f5a38}.badge.warn{background:#fdf1d6;color:#7a5400}.badge.bad{background:#f8e3e4;color:#8e0d14}
+.xmenu{position:relative}.xmenu>summary{list-style:none}.xmenu>summary::-webkit-details-marker{display:none}
+.xpop{position:absolute;right:0;top:calc(100% + 4px);z-index:5;background:#fff;border:1px solid var(--ring);border-radius:10px;box-shadow:0 8px 28px rgba(45,60,75,.14);padding:4px;min-width:150px;display:grid}
+.xpop button{border:0;background:transparent;text-align:left;padding:9px 12px;border-radius:8px;font:600 13px var(--font-head);color:var(--blau);min-height:40px}
+.xpop button:hover{background:var(--tuerkis-10)}
+.actions{flex-wrap:nowrap}
+@media(max-width:860px){.actions{flex-wrap:wrap}td .pill{justify-self:start;width:max-content}.xpop{left:0;right:auto}}
+dialog.wide{max-width:980px}
+.dlg-x{width:40px;height:40px;border-radius:50%;border:0;background:rgba(255,255,255,.25);color:#fff;font:700 20px/1 var(--font-head)}
+.dlg-head{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:1}
+dialog{max-height:calc(100dvh - 24px);overflow:auto}
+@media(max-width:860px){
+  .table-wrap{background:transparent;border:0;box-shadow:none;overflow:visible}
+  table{min-width:0}thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:12px;padding:6px 4px}
+  td{display:grid;grid-template-columns:120px minmax(0,1fr);gap:10px;align-items:center;border:0;padding:8px 14px;text-align:left!important}
+  td:before{content:attr(data-label);font:700 11px/1.3 var(--font-head);letter-spacing:.03em;color:var(--muted)}
+  td:first-child{grid-template-columns:1fr;border-bottom:1px solid var(--grid);padding-bottom:12px}
+  td:first-child:before{display:none}
+  td.act-cell{grid-template-columns:1fr;border-top:1px solid var(--grid);padding-top:12px}
+  td.act-cell:before{display:none}
+  .actions{justify-content:flex-start}
+  .prog{width:100%}
+  .toolbar .sort{flex:1 1 100%}.sort select{width:100%}
+}
+@media(max-width:640px){.create{grid-template-columns:1fr}.kpis{gap:8px}.kpi{padding:12px}}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.wrap{padding:0 16px 48px}.hero-inner{padding:18px 16px 30px}.logo{height:38px}.bar-inner{padding:10px 16px}.subline{margin-left:.6em}.panel{padding:16px}.row{grid-template-columns:1fr}.link-row{grid-template-columns:1fr 1fr}.link-row input{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -172,22 +217,33 @@ footer.foot a{color:#fff}footer.foot a:hover{color:var(--gold)}
       <div class="kpi k-yellow"><strong id="kYellow">0</strong><span>Gelbe Befunde gesamt</span></div>
     </section>
 
-    <div class="toolbar">
-      <label class="search"><span aria-hidden="true">⌕</span><span class="sr-only">Checks durchsuchen</span><input id="search" type="search" placeholder="Landesverband oder Wahl suchen …"></label>
+    <section class="panel create-panel" aria-labelledby="createTitle">
+      <h2 id="createTitle">Neuen Health Check anlegen</h2>
       <div class="create">
-        <label><span class="sr-only">Bezeichnung des neuen Checks</span><input class="text-input" id="newLabel" placeholder="Neuer Check, z. B. LTW Sachsen-Anhalt 2026" autocomplete="off"></label>
+        <label><span class="sr-only">Bezeichnung des neuen Checks</span><input class="text-input" id="newLabel" placeholder="z. B. LTW Sachsen-Anhalt 2026" autocomplete="off"></label>
         <button class="btn primary" type="button" id="createBtn">Check anlegen</button>
       </div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><span class="sr-only">Checks durchsuchen</span><input id="search" type="search" placeholder="Landesverband oder Wahl suchen …"></label>
+      <div class="chips" id="filters" role="group" aria-label="Filter">
+        <button type="button" class="chip" data-f="all" aria-pressed="true">Alle</button>
+        <button type="button" class="chip" data-f="red" aria-pressed="false"><i class="d" style="background:var(--st-red)"></i>Mit roten Befunden</button>
+        <button type="button" class="chip" data-f="soon" aria-pressed="false">Wahl in ≤ 90 Tagen</button>
+        <button type="button" class="chip" data-f="stale" aria-pressed="false">Seit 14 Tagen inaktiv</button>
+      </div>
+      <label class="sort"><span class="sr-only">Sortierung</span><select class="text-input" id="sort"><option value="updated">Zuletzt geändert</option><option value="election">Nächste Wahl zuerst</option><option value="progress">Geringster Fortschritt</option><option value="red">Meiste rote Befunde</option><option value="name">Name A–Z</option></select></label>
     </div>
 
     <div class="table-wrap">
       <table>
         <thead><tr>
-          <th>Landesverband / Wahl</th><th>Wahltermin</th><th>Fortschritt</th><th class="num">Rot</th><th class="num">Gelb</th><th>Letzte Änderung</th><th class="num">Aktionen</th>
+          <th>Landesverband / Wahl</th><th>Wahltermin</th><th>Fortschritt</th><th class="num">Rot</th><th class="num">Gelb</th><th class="num">Bilder</th><th>Letzte Änderung</th><th class="num">Aktionen</th>
         </tr></thead>
         <tbody id="rows"></tbody>
       </table>
-      <div class="empty hidden" id="empty">Noch keine Health Checks angelegt.</div>
+      <div class="empty hidden" id="empty">Keine Health Checks für diese Auswahl.</div>
     </div>
     <p style="margin-top:12px"><button class="btn small" type="button" id="exportOverview">Übersicht als CSV exportieren</button></p>
   </div>
@@ -201,7 +257,7 @@ footer.foot a{color:#fff}footer.foot a:hover{color:var(--gold)}
 </footer>
 
 <dialog id="linkDialog" aria-labelledby="linkTitle">
-  <div class="dlg-head"><h2 id="linkTitle">Links</h2></div>
+  <div class="dlg-head"><h2 id="linkTitle">Links</h2><button class="dlg-x" type="button" id="linkX" aria-label="Schließen">×</button></div>
   <div class="dlg-body">
     <p id="linkCheck" style="margin:0 0 12px;font-weight:700;color:var(--blau)"></p>
     <span class="field-label">Bearbeitungslink – an das Kampagnenteam des Landesverbands</span>
@@ -210,6 +266,15 @@ footer.foot a{color:#fff}footer.foot a:hover{color:var(--gold)}
     <div class="link-row"><input class="text-input" id="viewLink" readonly><button class="btn small" type="button" data-copy="viewLink">Kopieren</button><button class="btn small" type="button" data-rotate="view">Neu erzeugen</button></div>
     <p class="small-note">„Neu erzeugen“ sperrt den bisherigen Link sofort. Wer ihn noch nutzt, verliert den Zugriff und braucht den neuen Link.</p>
     <div class="dlg-actions"><button class="btn primary" type="button" id="linkClose">Schließen</button></div>
+  </div>
+</dialog>
+
+<dialog id="imgDialog" class="wide" aria-labelledby="imgTitle">
+  <div class="dlg-head"><h2 id="imgTitle">Bildmaterial</h2><button class="dlg-x" type="button" id="imgClose" aria-label="Schließen">×</button></div>
+  <div class="dlg-body">
+    <p id="imgCheck" style="margin:0 0 12px;font-weight:700;color:var(--blau)"></p>
+    <div class="gallery" id="imgGallery"></div>
+    <p class="small-note" style="margin-top:14px">Download-Links sind aus Sicherheitsgründen eine Stunde gültig. Bildnachweis bei Verwendung angeben.</p>
   </div>
 </dialog>
 
@@ -285,23 +350,31 @@ $('logoutBtn').addEventListener('click',async()=>{
 function daysUntil(s){const m=String(s||'').match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);const t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/864e5);}
 function render(){
   const q=$('search').value.trim().toLocaleLowerCase('de');
-  const list=checks.filter(c=>!q||(c.label||'').toLocaleLowerCase('de').includes(q));
+  const rated=c=>{const k=c.counts||{};return (k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0);};
+  let list=checks.filter(c=>!q||(c.label||'').toLocaleLowerCase('de').includes(q));
+  if(FILTER==='red')list=list.filter(c=>(c.counts?.red||0)>0);
+  if(FILTER==='soon')list=list.filter(c=>{const d=daysUntil(c.wahltermin);return d!=null&&d>=0&&d<=90;});
+  if(FILTER==='stale')list=list.filter(c=>Date.now()-new Date(c.updated_at)>14*864e5);
+  const srt=$('sort').value,far=1e9;
+  const cmp={updated:(a,b)=>new Date(b.updated_at)-new Date(a.updated_at),election:(a,b)=>{const x=daysUntil(a.wahltermin),y=daysUntil(b.wahltermin);return (x==null||x<0?far:x)-(y==null||y<0?far:y);},progress:(a,b)=>rated(a)-rated(b),red:(a,b)=>(b.counts?.red||0)-(a.counts?.red||0),name:(a,b)=>(a.label||'').localeCompare(b.label||'','de')}[srt];
+  list=[...list].sort(cmp);
   const col={green:'var(--st-green)',yellow:'var(--st-yellow)',red:'var(--st-red)',na:'var(--st-na)'};
   $('rows').innerHTML=list.map(c=>{
     const k=c.counts||{};const rated=(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0);const pct=TOTAL?Math.round(100*rated/TOTAL):0;
     const d=daysUntil(c.wahltermin);
     return `<tr data-id="${esc(c.id)}">
-      <td><span class="lbl">${esc(c.label||'Ohne Bezeichnung')}</span><span class="sub">${esc(c.verantwortlich||'')}${c.stand?` · Stand ${esc(c.stand)}`:''}</span></td>
-      <td>${esc(c.wahltermin||'–')}${d!=null?`<span class="sub">${d>0?`in ${d.toLocaleString('de-DE')} Tagen`:d===0?'heute':'vorbei'}</span>`:''}</td>
-      <td><div class="prog" title="${rated} von ${TOTAL} bewertet">${['green','yellow','red','na'].map(s=>k[s]?`<i style="width:${100*k[s]/TOTAL}%;background:${col[s]}"></i>`:'').join('')}</div><div class="prog-txt">${rated} / ${TOTAL} bewertet (${pct} %)</div></td>
-      <td class="num"><span class="pill ${k.red?'red':'zero'}">${k.red||0}</span></td>
-      <td class="num"><span class="pill ${k.yellow?'yellow':'zero'}">${k.yellow||0}</span></td>
-      <td>${fmt(c.updated_at)}</td>
-      <td><div class="actions">
+      <td data-label="Landesverband / Wahl"><span class="lbl">${esc(c.label||'Ohne Bezeichnung')}</span><span class="sub">${esc(c.verantwortlich||'')}${c.stand?` · Stand ${esc(c.stand)}`:''}</span></td>
+      <td data-label="Wahltermin"><div>${esc(c.wahltermin||'–')}${d!=null?`<span class="sub">${d>0?`in ${d.toLocaleString('de-DE')} Tagen`:d===0?'heute':'vorbei'}</span>`:''}</div></td>
+      <td data-label="Fortschritt"><div><div class="prog" title="${rated} von ${TOTAL} bewertet">${['green','yellow','red','na'].map(s=>k[s]?`<i style="width:${100*k[s]/TOTAL}%;background:${col[s]}"></i>`:'').join('')}</div><div class="prog-txt">${rated} / ${TOTAL} bewertet (${pct} %)</div></div></td>
+      <td class="num" data-label="Rot"><span class="pill ${k.red?'red':'zero'}">${k.red||0}</span></td>
+      <td class="num" data-label="Gelb"><span class="pill ${k.yellow?'yellow':'zero'}">${k.yellow||0}</span></td>
+      <td class="num" data-label="Bilder">${c.images?`<button class="pill img" type="button" data-act="images">${c.images}</button>`:'<span class="pill zero">0</span>'}</td>
+      <td data-label="Letzte Änderung">${fmt(c.updated_at)}</td>
+      <td class="act-cell"><div class="actions">
         <button class="btn small" type="button" data-act="links">Links</button>
+        <button class="btn small" type="button" data-act="images">Bilder</button>
         <a class="btn small" href="${esc(pageBase()+'#t='+c.view_token)}" target="_blank" rel="noopener">Ansehen</a>
-        <button class="btn small" type="button" data-act="csv">CSV</button>
-        <button class="btn small" type="button" data-act="json">JSON</button>
+        <details class="xmenu"><summary class="btn small">Export</summary><div class="xpop"><button type="button" data-act="csv">CSV (Excel)</button><button type="button" data-act="json">JSON</button></div></details>
       </div></td></tr>`;
   }).join('');
   $('empty').classList.toggle('hidden',list.length>0);
@@ -315,6 +388,9 @@ async function load(){
   catch(e){if(e.code==='42501'){show('denyPanel');return;}toast(e.message);}
 }
 $('search').addEventListener('input',render);
+let FILTER='all';
+$('filters').addEventListener('click',e=>{const c=e.target.closest('[data-f]');if(!c)return;FILTER=c.dataset.f;document.querySelectorAll('#filters .chip').forEach(x=>x.setAttribute('aria-pressed',String(x===c)));render();});
+$('sort').addEventListener('change',render);
 $('refreshBtn').addEventListener('click',()=>load().then(()=>toast('Aktualisiert.')));
 
 /* ---------- Anlegen ---------- */
@@ -335,7 +411,7 @@ function openLinks(id){
   $('viewLink').value=pageBase()+'#t='+current.view_token;
   if(!$('linkDialog').open)$('linkDialog').showModal();
 }
-$('linkClose').addEventListener('click',()=>$('linkDialog').close());
+$('linkClose').addEventListener('click',()=>$('linkDialog').close());$('linkX').addEventListener('click',()=>$('linkDialog').close());
 document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const i=$(b.dataset.copy);try{await navigator.clipboard.writeText(i.value);toast('Link kopiert.');}catch(e){i.select();toast('Link markiert – mit Strg/⌘+C kopieren.');}}));
 document.querySelectorAll('[data-rotate]').forEach(b=>b.addEventListener('click',async()=>{
   if(!current)return;const which=b.dataset.rotate;
@@ -343,6 +419,22 @@ document.querySelectorAll('[data-rotate]').forEach(b=>b.addEventListener('click'
   try{await rpc('hc_admin_rotate',{p_id:current.id,p_which:which});const id=current.id;await load();openLinks(id);toast('Neuer Link erzeugt – bitte neu verteilen.');}
   catch(e){toast(e.message);}
 }));
+
+/* ---------- Bildmaterial ---------- */
+const RIGHTS={cdu:['Alle Rechte bei CDU / Landesverband','ok'],wahlkampf:['Nutzungsrecht für Wahlkampfzwecke','ok'],eingeschraenkt:['Eingeschränktes Nutzungsrecht','warn'],cc:['Freie Lizenz','ok'],ungeklaert:['Rechte ungeklärt','bad']};
+async function openImages(id){
+  const c=checks.find(x=>x.id===id);if(!c)return;
+  $('imgCheck').textContent=c.label||'';$('imgGallery').innerHTML='<div class="empty">Bilder werden geladen …</div>';$('imgDialog').showModal();
+  try{
+    const t=await token();if(!t)throw new Error('Sitzung abgelaufen – bitte neu anmelden.');
+    const r=await fetch(`${BASE}/functions/v1/hc-images`,{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY,Authorization:'Bearer '+t},body:JSON.stringify({action:'list',check_id:id})});
+    const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||`Fehler ${r.status}`);
+    const imgs=j.images||[];
+    $('imgGallery').innerHTML=imgs.length?imgs.map(im=>{const rr=RIGHTS[im.rights]||[im.rights,'warn'];return `<article class="img-card"><img src="${esc(im.thumb_url||'')}" alt="${esc(im.caption||'Bild')}" loading="lazy"><div class="img-body"><strong>Foto: ${esc(im.photographer)}</strong>${im.caption?`<span>${esc(im.caption)}</span>`:''}<span class="badge ${rr[1]}">${esc(rr[0])}</span>${im.rights_note?`<span>${esc(im.rights_note)}</span>`:''}<span>${im.width?im.width+' × '+im.height+' px · ':''}${im.bytes?Math.round(im.bytes/1024).toLocaleString('de-DE')+' KB':''}</span><a class="btn small" href="${esc(im.download_url||'#')}" rel="noopener">Original herunterladen</a></div></article>`;}).join(''):'<div class="empty">Für diesen Check wurden noch keine Bilder hochgeladen.</div>';
+  }catch(e){$('imgGallery').innerHTML=`<div class="empty">${esc(e.message)}</div>`;}
+}
+$('imgClose').addEventListener('click',()=>$('imgDialog').close());
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close();}));
 
 /* ---------- Export ---------- */
 function download(name,content,type){const b=new Blob([content],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
@@ -368,11 +460,12 @@ async function exportCheck(id,kind){
     download(`${slug(r.label)}-health-check.csv`,'﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');
   }catch(e){toast('Export fehlgeschlagen: '+e.message);}
 }
+document.addEventListener('click',e=>{document.querySelectorAll('.xmenu[open]').forEach(m=>{if(!m.contains(e.target)||e.target.closest('[data-act]'))m.removeAttribute('open');});});
 $('rows').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const id=b.closest('tr').dataset.id;
-  if(b.dataset.act==='links')openLinks(id);else exportCheck(id,b.dataset.act);});
+  if(b.dataset.act==='links')openLinks(id);else if(b.dataset.act==='images')openImages(id);else exportCheck(id,b.dataset.act);});
 $('exportOverview').addEventListener('click',()=>{
-  const lines=[['Landesverband / Wahl','Wahltermin','Gesamtverantwortliche/r','Bewertet','Grün','Gelb','Rot','Grau','Letzte Änderung','Angelegt'].map(csvCell).join(';')];
-  checks.forEach(c=>{const k=c.counts||{};lines.push([c.label,c.wahltermin,c.verantwortlich,(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0),k.green||0,k.yellow||0,k.red||0,k.na||0,fmt(c.updated_at),fmt(c.created_at)].map(csvCell).join(';'));});
+  const lines=[['Landesverband / Wahl','Wahltermin','Gesamtverantwortliche/r','Bewertet','Grün','Gelb','Rot','Grau','Bilder','Letzte Änderung','Angelegt'].map(csvCell).join(';')];
+  checks.forEach(c=>{const k=c.counts||{};lines.push([c.label,c.wahltermin,c.verantwortlich,(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0),k.green||0,k.yellow||0,k.red||0,k.na||0,c.images||0,fmt(c.updated_at),fmt(c.created_at)].map(csvCell).join(';'));});
   download(`health-check-uebersicht-${new Date().toISOString().slice(0,10)}.csv`,'﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');
 });
 

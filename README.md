@@ -9,7 +9,9 @@ Das Werkzeug besteht aus zwei getrennten Bereichen:
 | **Frontend** | `index.html` | Kampagnenteams der Landesverbände | Persönlicher Bearbeitungslink (`…/#t=…`), kein Konto nötig |
 | **KAH-Backend** | `admin.html` | Mitarbeitende des Konrad-Adenauer-Hauses | Anmeldung per E-Mail-Link, nur freigeschaltete Adressen |
 
-Im KAH-Backend: Übersicht aller Checks mit Fortschritt und Ampelständen, neue Checks anlegen, Bearbeitungs- und Leselinks anzeigen, sperren und neu erzeugen, einzelne Checks ansehen und als CSV/JSON exportieren, Übersicht als CSV.
+Im Frontend zusätzlich: **Bildmaterial des/der Spitzenkandidat/in** hochladen – mit Pflichtangaben zu Fotograf/in und Bildrechten, Nutzungsbedingungen und Bildunterschrift.
+
+Im KAH-Backend: Übersicht aller Checks mit Fortschritt, Ampelständen und Bildanzahl (Filter und Sortierung), Bildmaterial je Check ansehen und herunterladen, neue Checks anlegen, Bearbeitungs- und Leselinks anzeigen, sperren und neu erzeugen, einzelne Checks ansehen und als CSV/JSON exportieren, Übersicht als CSV.
 
 ## Aufbau
 
@@ -22,12 +24,15 @@ Im KAH-Backend: Übersicht aller Checks mit Fortschritt und Ampelständen, neue 
 | `assets/questions.js` | Die 141 Leitfragen – gemeinsame Quelle für Frontend und Backend |
 | `assets/cdu-logo.png` | Offizielles Logo der CDU Deutschlands |
 | `assets/fonts/`, `assets/fonts.css` | Lokal eingebundene Schriften (Inter, IBM Plex Serif, SIL OFL) – keine Verbindung zu Google Fonts |
-| `supabase/migrations/` | Datenbank in zwei Schritten: `…000000_health_check.sql` (Checks, Links, Speichern), `…120000_kah_backend.sql` (KAH-Anmeldung, Admin-Funktionen) |
+| `supabase/migrations/` | Datenbank in drei Schritten: `…000000_health_check.sql` (Checks, Links, Speichern), `…120000_kah_backend.sql` (KAH-Anmeldung, Admin-Funktionen), `20261017090000_bilder.sql` (privater Bild-Speicher, Bild-Metadaten) |
+| `supabase/functions/hc-images/index.ts` | Edge Function für Bild-Upload, -Liste, -Bearbeitung und -Löschung (prüft Link bzw. KAH-Anmeldung) |
 
 ## Supabase (eingerichtet)
 
 - Projekt `campaign-health-check` in der Organisation kahki-dev, Region Frankfurt
-- Beide SQL-Dateien sind ausgeführt.
+- Alle drei SQL-Dateien sind ausgeführt.
+- Edge Function `hc-images` ist deployt, **„Verify JWT“ ist ausgeschaltet** (Landesverbände arbeiten ohne Anmeldung; die Prüfung erfolgt im Code). Bei Änderungen: *Edge Functions → hc-images → Code* den Inhalt von `supabase/functions/hc-images/index.ts` einfügen und deployen – danach prüfen, dass „Verify JWT“ weiterhin aus ist.
+- Bilder liegen im privaten Bucket `hc-images` (max. 15 MB, JPEG/PNG/WebP, max. 30 Bilder pro Check). Download-Links sind eine Stunde gültig.
 - **Authentication → URL Configuration:** Site URL `https://kahki-dev.github.io/campaign-health-check/admin.html`, Redirect `https://kahki-dev.github.io/campaign-health-check/**`. Bei anderer Adresse (z. B. eigene Domain) beide Werte anpassen, sonst funktioniert der Anmeldelink nicht.
 
 ### KAH-Mitarbeitende freischalten
