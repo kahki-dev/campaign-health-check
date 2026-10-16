@@ -15,7 +15,7 @@
 <header class="hero">
   <div class="hero-inner">
     <div class="brandbar">
-      <span class="wordmark">CDU</span>
+      <img class="logo" src="assets/cdu-logo.png" width="666" height="191" alt="CDU Deutschlands">
       <a class="back" href="./">← Zum Health Check</a>
     </div>
     <h1 class="hl"><span>Datenschutzhinweise</span></h1>
@@ -41,7 +41,7 @@
     <p>Sie erreichen unseren Datenschutzbeauftragten unter datenschutz(at)cdu.de oder unter der oben genannten Postanschrift mit dem Zusatz „Der Datenschutzbeauftragte“.</p>
 
     <h2>3. Zweck des Angebots</h2>
-    <p>Der Campaign Health Check ist ein internes Arbeitswerkzeug, mit dem wahlkampfführende Landesverbände und das Konrad-Adenauer-Haus den Stand der Kampagnenvorbereitung erfassen, bewerten und gemeinsam steuern. Es gibt keine Benutzerkonten. Der Zugriff erfolgt ausschließlich über persönlich weitergegebene Bearbeitungs- und Leselinks.</p>
+    <p>Der Campaign Health Check ist ein internes Arbeitswerkzeug, mit dem wahlkampfführende Landesverbände und das Konrad-Adenauer-Haus den Stand der Kampagnenvorbereitung erfassen, bewerten und gemeinsam steuern. Landesverbände benötigen kein Benutzerkonto; sie greifen über persönlich weitergegebene Bearbeitungs- und Leselinks zu. Mitarbeitende des Konrad-Adenauer-Hauses melden sich für den Verwaltungsbereich (KAH-Backend) mit ihrer dienstlichen E-Mail-Adresse an.</p>
 
     <h2>4. Welche Daten verarbeitet werden</h2>
     <h3>a) Inhalte der Checkliste</h3>
@@ -49,14 +49,17 @@
     <p>Zu jedem Check werden außerdem eine Bezeichnung, Zeitpunkte der Erstellung und letzten Änderung, eine Versionsnummer sowie automatische Sicherungsstände (höchstens alle 15 Minuten) gespeichert.</p>
     <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Unser berechtigtes Interesse liegt in der koordinierten Vorbereitung und Durchführung von Wahlkämpfen zwischen Bundespartei und Landesverbänden.</p>
 
-    <h3>b) Technische Zugriffsdaten</h3>
+    <h3>b) Anmeldung im KAH-Backend</h3>
+    <p>Für die Anmeldung von KAH-Mitarbeitenden werden die E-Mail-Adresse, eine interne Benutzerkennung sowie Zeitpunkte der Anmeldung über den Anmeldedienst von Supabase (Supabase Auth) verarbeitet. An die angegebene Adresse wird ein einmal gültiger Anmeldelink versandt. Zugriff erhalten nur Adressen, die vom Konrad-Adenauer-Haus freigeschaltet wurden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (Schutz des Verwaltungsbereichs vor unbefugtem Zugriff) bzw. § 26 BDSG für Beschäftigte.</p>
+
+    <h3>c) Technische Zugriffsdaten</h3>
     <p>Beim Aufruf der Seite und bei jedem Speichervorgang verarbeiten die eingesetzten Dienstleister technisch notwendige Daten, insbesondere IP-Adresse, Datum und Uhrzeit, aufgerufene Adresse sowie Browser- und Systeminformationen. Diese Daten dienen der Auslieferung, Stabilität und Sicherheit des Angebots (Art. 6 Abs. 1 lit. f DSGVO) und werden von uns nicht mit den Inhalten der Checkliste zusammengeführt.</p>
 
     <h2>5. Eingesetzte Dienstleister</h2>
     <h3>Datenbank: Supabase</h3>
-    <p>Die Inhalte werden in einer Datenbank der Supabase Pte. Ltd., 65 Chulia Street #38-02/03, OCBC Centre, Singapur 049513, gespeichert. Der Server steht in Frankfurt am Main (Region eu-central-1). Supabase verarbeitet die Daten in unserem Auftrag auf Grundlage eines Vertrags zur Auftragsverarbeitung nach Art. 28 DSGVO. Soweit Supabase oder dessen Unterauftragnehmer Daten außerhalb der EU verarbeiten (insbesondere in Singapur und den USA), erfolgt dies auf Grundlage der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO).</p>
+    <p>Die Inhalte und die Anmeldedaten des KAH-Backends werden bei der Supabase Pte. Ltd., 65 Chulia Street #38-02/03, OCBC Centre, Singapur 049513, verarbeitet und in einer Datenbank gespeichert. Der Server steht in Frankfurt am Main (Region eu-central-1). Supabase verarbeitet die Daten in unserem Auftrag auf Grundlage eines Vertrags zur Auftragsverarbeitung nach Art. 28 DSGVO. Soweit Supabase oder dessen Unterauftragnehmer Daten außerhalb der EU verarbeiten (insbesondere in Singapur und den USA), erfolgt dies auf Grundlage der EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO).</p>
     <h3>Hosting der Seite: GitHub Pages</h3>
-    <p>Die Seite selbst (ohne die Inhalte der Checkliste) wird über GitHub Pages der GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, USA, ausgeliefert. Dabei verarbeitet GitHub die unter 4 b) genannten Zugriffsdaten, auch in den USA. GitHub ist unter dem EU-U.S. Data Privacy Framework zertifiziert (Angemessenheitsbeschluss nach Art. 45 DSGVO).</p>
+    <p>Die Seite selbst (ohne die Inhalte der Checkliste) wird über GitHub Pages der GitHub, Inc., 88 Colin P. Kelly Jr. St., San Francisco, CA 94107, USA, ausgeliefert. Dabei verarbeitet GitHub die unter 4 c) genannten Zugriffsdaten, auch in den USA. GitHub ist unter dem EU-U.S. Data Privacy Framework zertifiziert (Angemessenheitsbeschluss nach Art. 45 DSGVO).</p>
 
     <h2>6. Speicherung im Browser, keine Cookies, kein Tracking</h2>
     <p>Damit Eingaben bei einem Verbindungsabbruch nicht verloren gehen, legt die Seite eine Zwischenkopie im lokalen Speicher Ihres Browsers (localStorage) ab. Diese Kopie verlässt Ihr Gerät nicht und kann jederzeit über die Browsereinstellungen gelöscht werden. Die Speicherung ist für den von Ihnen ausdrücklich gewünschten Dienst unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).</p>
@@ -66,7 +69,7 @@
     <p>Wer einen Bearbeitungs- oder Leselink besitzt, kann den jeweiligen Check ohne Anmeldung aufrufen. Bitte geben Sie Links nur über interne Kanäle und nur an berechtigte Personen weiter. Ein kompromittierter Link kann vom Konrad-Adenauer-Haus jederzeit gesperrt und ersetzt werden.</p>
 
     <h2>8. Speicherdauer</h2>
-    <p>Die Inhalte eines Checks werden gespeichert, solange sie für die Kampagnensteuerung und die Nachbereitung der jeweiligen Wahl benötigt werden, und anschließend einschließlich aller Sicherungsstände gelöscht. Die Zugriffsdaten der Dienstleister werden nach deren Vorgaben, in der Regel nach wenigen Tagen bis Wochen, gelöscht.</p>
+    <p>Anmeldedaten von KAH-Mitarbeitenden werden gelöscht, sobald die Freischaltung endet. Die Inhalte eines Checks werden gespeichert, solange sie für die Kampagnensteuerung und die Nachbereitung der jeweiligen Wahl benötigt werden, und anschließend einschließlich aller Sicherungsstände gelöscht. Die Zugriffsdaten der Dienstleister werden nach deren Vorgaben, in der Regel nach wenigen Tagen bis Wochen, gelöscht.</p>
 
     <h2>9. Ihre Rechte</h2>
     <p>Sie haben nach Maßgabe der gesetzlichen Bestimmungen das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie das Recht, der Verarbeitung aus Gründen, die sich aus Ihrer besonderen Situation ergeben, zu widersprechen (Art. 21 DSGVO). Wenden Sie sich dazu an den Datenschutzbeauftragten.</p>

@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#52b7c1">
+<title>KAH-Backend · Campaign Health Check</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+:root{
+  color-scheme:light;
+  --tuerkis:#52b7c1;--blau:#2d3c4b;--gold:#ffa600;--weiss:#fff;--union-schwarz:#1b191d;--union-rot:#bf111b;
+  --tuerkis-10:#eef8f9;--tuerkis-25:#d4edef;--tuerkis-dark:#2f6f7e;--blau-10:#eaeced;--blau-25:#cacfd2;--blau-60:#818b95;
+  --page:#f5f6f6;--surface:#fff;--ink:#2d3c4b;--text-2:#4d5a68;--muted:#6b7682;--grid:#e1e5e8;--ring:rgba(45,60,75,.12);
+  --st-green:#2e7d4f;--st-yellow:#c98a00;--st-red:#bf111b;--st-na:#818b95;
+  --font-head:'Inter',system-ui,-apple-system,"Segoe UI",sans-serif;--font-copy:'IBM Plex Serif',Georgia,"Times New Roman",serif;
+  --radius:14px;--shadow:0 2px 10px rgba(45,60,75,.06);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font-copy);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer}
+h1,h2,h3{font-family:var(--font-head);letter-spacing:-.01em;color:var(--blau);margin:0}
+.hidden{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px 72px}
+
+.hero{position:relative;overflow:hidden;background:var(--tuerkis);color:var(--weiss)}
+.hero-inner{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:22px 24px 40px}
+.bogen-bg{position:absolute;right:-3%;bottom:-2px;width:52%;max-width:700px;color:#7cc9d1;opacity:.55;pointer-events:none}
+.brandbar{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:36px}
+.logo{display:block;height:48px;width:auto}
+.brand-org{font:600 13px/1.35 var(--font-head);color:var(--weiss)}
+.brand-org span{display:block;font-weight:400;opacity:.92}
+.hl{font-size:clamp(2.1rem,5vw,3.6rem);line-height:1;margin:0}
+.hl span{display:inline-block;background:var(--blau);color:var(--weiss);font-family:var(--font-head);font-weight:800;letter-spacing:-.01em;padding:.1em .32em .14em;line-height:1.08}
+.hl .indent{margin-left:.9em}
+.hl .hl-c{background:var(--blau-60)}
+.subline{display:inline-block;margin:0 0 0 1.4em;background:var(--gold);color:var(--blau);font:400 clamp(1rem,1.5vw,1.15rem)/1.35 var(--font-copy);padding:.4em .9em}
+
+.bar{background:var(--blau);color:var(--weiss)}
+.bar-inner{max-width:1240px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:500 13px/1.3 var(--font-head)}
+.bar .who{display:inline-flex;align-items:center;gap:8px;min-height:30px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--blau-60);flex:none}
+.dot.on{background:#5fd08a}
+.btn-ghost{border:1px solid rgba(255,255,255,.45);background:transparent;color:var(--weiss);border-radius:999px;padding:6px 14px;font:700 12.5px var(--font-head)}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+.push{margin-left:auto}
+
+.panel{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px;margin-top:22px}
+.panel h2{font-size:1.3rem;font-weight:800;margin-bottom:8px}
+.panel p{margin:0 0 10px;color:var(--text-2)}
+.field-label{display:block;font:700 11px/1.35 var(--font-head);letter-spacing:.04em;color:var(--text-2);margin-bottom:5px}
+.text-input{width:100%;border:1px solid var(--blau-25);border-radius:8px;padding:10px 12px;font:14px var(--font-head);background:#fff}
+.text-input:focus{outline:none;border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.22)}
+.row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:end;margin-top:12px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--blau-25);background:var(--surface);color:var(--blau);border-radius:999px;padding:9px 15px;font:700 12.5px var(--font-head);white-space:nowrap;text-decoration:none}
+.btn:hover{background:var(--tuerkis-10);border-color:var(--tuerkis)}
+.btn.primary{background:var(--blau);border-color:var(--blau);color:var(--weiss)}
+.btn.primary:hover{background:#3a4d60}
+.btn.small{padding:6px 11px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,.btn-ghost:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.msg{font:14px/1.5 var(--font-head);color:var(--text-2);margin-top:12px}
+.msg.ok{color:var(--st-green)}.msg.err{color:var(--union-rot)}
+
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+.kpi{background:var(--surface);border:1px solid var(--ring);border-top:4px solid var(--tuerkis);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.kpi.k-red{border-top-color:var(--st-red)}.kpi.k-yellow{border-top-color:var(--st-yellow)}.kpi.k-blau{border-top-color:var(--blau)}
+.kpi strong{display:block;font:800 26px/1.05 var(--font-head);color:var(--blau)}
+.kpi span{display:block;margin-top:4px;font:600 12px/1.25 var(--font-head);color:var(--muted)}
+
+.toolbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;margin:22px 0 10px}
+.create{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px}
+.search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--blau-25);border-radius:999px;padding:0 14px;min-height:42px}
+.search input{width:100%;border:0;background:transparent;outline:0;font:14px var(--font-head);min-height:40px}
+.search:focus-within{border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.22)}
+
+.table-wrap{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);overflow-x:auto}
+table{width:100%;border-collapse:collapse;font:14px/1.4 var(--font-head);min-width:900px}
+th{font:700 11px/1.3 var(--font-head);letter-spacing:.04em;color:var(--text-2);text-align:left;padding:12px 14px;border-bottom:1px solid var(--grid);background:var(--tuerkis-10);white-space:nowrap}
+th.num,td.num{text-align:right;font-variant-numeric:tabular-nums}
+td{padding:12px 14px;border-bottom:1px solid var(--grid);vertical-align:middle;color:var(--blau)}
+tr:last-child td{border-bottom:0}
+td .lbl{font-weight:800}
+td .sub{display:block;font-size:12px;color:var(--muted);font-weight:400}
+.prog{display:flex;height:10px;width:180px;border-radius:999px;overflow:hidden;background:var(--blau-10)}
+.prog i{display:block;height:100%}
+.prog-txt{font-size:12px;color:var(--muted);margin-top:4px}
+.pill{display:inline-block;min-width:28px;text-align:center;border-radius:999px;padding:2px 8px;font:700 12px var(--font-head)}
+.pill.red{background:#f8e3e4;color:#8e0d14}.pill.yellow{background:#fdf1d6;color:#7a5400}.pill.zero{background:var(--blau-10);color:var(--muted)}
+.actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.empty{padding:34px;text-align:center;color:var(--text-2);font:14px var(--font-head)}
+
+dialog{border:0;border-radius:var(--radius);padding:0;max-width:660px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(27,25,29,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(45,60,75,.55)}
+.dlg-head{background:var(--tuerkis);padding:18px 22px}
+.dlg-head h2{display:inline-block;background:var(--blau);color:#fff;padding:.12em .35em;font-size:1.3rem}
+.dlg-body{padding:18px 22px 22px;font:14px/1.5 var(--font-head);color:var(--text-2)}
+.link-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;margin:6px 0 16px}
+.link-row input{font:12.5px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--blau)}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px}
+.small-note{font:13px/1.5 var(--font-head);color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--blau);color:#fff;padding:11px 18px;border-radius:999px;font:600 13px var(--font-head);box-shadow:0 8px 24px rgba(27,25,29,.25);transition:opacity .2s,transform .2s;z-index:50;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+footer.foot{background:var(--blau);color:#cfd6dc;font:12.5px/1.5 var(--font-head)}
+footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer.foot a{color:#fff}footer.foot a:hover{color:var(--gold)}
+
+@media(max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.toolbar{grid-template-columns:1fr}}
+@media(max-width:640px){.wrap{padding:0 16px 48px}.hero-inner{padding:18px 16px 30px}.logo{height:38px}.bar-inner{padding:10px 16px}.subline{margin-left:.6em}.panel{padding:16px}.row,.create{grid-template-columns:1fr}.link-row{grid-template-columns:1fr 1fr}.link-row input{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <svg class="bogen-bg" viewBox="0 0 300 160" fill="currentColor" aria-hidden="true">
+    <path d="M10 160 L10 120 Q60 112 90 104 L90 160 Z"/>
+    <path d="M105 160 L105 99 Q155 86 185 74 L185 160 Z"/>
+    <path d="M200 160 L200 69 Q255 50 290 32 L290 160 Z"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="brandbar">
+      <img class="logo" src="assets/cdu-logo.png" width="666" height="191" alt="CDU Deutschlands">
+      <span class="brand-org">Konrad-Adenauer-Haus<span>Strategische Kommunikation &amp; Kampagne</span></span>
+    </div>
+    <h1 class="hl"><span>Campaign Health Check</span><br><span class="indent hl-c">KAH-Backend</span></h1>
+    <p class="subline">Übersicht und Steuerung aller Landesverbände</p>
+  </div>
+</header>
+
+<div class="bar" role="region" aria-label="Anmeldung">
+  <div class="bar-inner">
+    <span class="who"><i class="dot" id="whoDot"></i><span id="whoLabel">Nicht angemeldet</span></span>
+    <button class="btn-ghost hidden push" type="button" id="refreshBtn">Aktualisieren</button>
+    <button class="btn-ghost hidden" type="button" id="logoutBtn">Abmelden</button>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- Anmeldung -->
+  <section class="panel hidden" id="loginPanel" aria-labelledby="loginTitle">
+    <h2 id="loginTitle">Anmeldung für KAH-Mitarbeitende</h2>
+    <p>Geben Sie Ihre dienstliche E-Mail-Adresse ein. Sie erhalten einen Anmeldelink, der 60 Minuten gültig ist. Zugriff haben nur freigeschaltete Adressen.</p>
+    <div class="row">
+      <label><span class="field-label">E-Mail-Adresse</span><input class="text-input" id="loginEmail" type="email" autocomplete="email" placeholder="vorname.nachname@cdu.de"></label>
+      <button class="btn primary" type="button" id="loginBtn">Anmeldelink senden</button>
+    </div>
+    <p class="msg" id="loginMsg" role="status"></p>
+  </section>
+
+  <!-- Kein Zugriff -->
+  <section class="panel hidden" id="denyPanel">
+    <h2>Kein Zugriff</h2>
+    <p>Sie sind angemeldet, Ihre Adresse ist aber nicht für das KAH-Backend freigeschaltet. Bitte wenden Sie sich an die Projektverantwortlichen.</p>
+  </section>
+
+  <!-- Konfiguration fehlt -->
+  <section class="panel hidden" id="configPanel">
+    <h2>Supabase nicht konfiguriert</h2>
+    <p>In <code>config.js</code> sind keine Supabase-Zugangsdaten eingetragen.</p>
+  </section>
+
+  <!-- Arbeitsbereich -->
+  <div id="app" class="hidden">
+    <section class="kpis" aria-label="Kennzahlen">
+      <div class="kpi k-blau"><strong id="kChecks">0</strong><span>Health Checks</span></div>
+      <div class="kpi"><strong id="kProg">0 %</strong><span>Ø Fortschritt</span></div>
+      <div class="kpi k-red"><strong id="kRed">0</strong><span>Rote Befunde gesamt</span></div>
+      <div class="kpi k-yellow"><strong id="kYellow">0</strong><span>Gelbe Befunde gesamt</span></div>
+    </section>
+
+    <div class="toolbar">
+      <label class="search"><span aria-hidden="true">⌕</span><span class="sr-only">Checks durchsuchen</span><input id="search" type="search" placeholder="Landesverband oder Wahl suchen …"></label>
+      <div class="create">
+        <label><span class="sr-only">Bezeichnung des neuen Checks</span><input class="text-input" id="newLabel" placeholder="Neuer Check, z. B. LTW Sachsen-Anhalt 2026" autocomplete="off"></label>
+        <button class="btn primary" type="button" id="createBtn">Check anlegen</button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>Landesverband / Wahl</th><th>Wahltermin</th><th>Fortschritt</th><th class="num">Rot</th><th class="num">Gelb</th><th>Letzte Änderung</th><th class="num">Aktionen</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+      <div class="empty hidden" id="empty">Noch keine Health Checks angelegt.</div>
+    </div>
+    <p style="margin-top:12px"><button class="btn small" type="button" id="exportOverview">Übersicht als CSV exportieren</button></p>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>CDU Deutschlands · Konrad-Adenauer-Haus · KAH-Backend</span>
+    <span><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · Vertraulich – nur für den internen Gebrauch</span>
+  </div>
+</footer>
+
+<dialog id="linkDialog" aria-labelledby="linkTitle">
+  <div class="dlg-head"><h2 id="linkTitle">Links</h2></div>
+  <div class="dlg-body">
+    <p id="linkCheck" style="margin:0 0 12px;font-weight:700;color:var(--blau)"></p>
+    <span class="field-label">Bearbeitungslink – an das Kampagnenteam des Landesverbands</span>
+    <div class="link-row"><input class="text-input" id="editLink" readonly><button class="btn primary small" type="button" data-copy="editLink">Kopieren</button><button class="btn small" type="button" data-rotate="edit">Neu erzeugen</button></div>
+    <span class="field-label">Leselink – nur Ansicht</span>
+    <div class="link-row"><input class="text-input" id="viewLink" readonly><button class="btn small" type="button" data-copy="viewLink">Kopieren</button><button class="btn small" type="button" data-rotate="view">Neu erzeugen</button></div>
+    <p class="small-note">„Neu erzeugen“ sperrt den bisherigen Link sofort. Wer ihn noch nutzt, verliert den Zugriff und braucht den neuen Link.</p>
+    <div class="dlg-actions"><button class="btn primary" type="button" id="linkClose">Schließen</button></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script src="assets/questions.js"></script>
+<script>
+const CONFIG = Object.assign({supabaseUrl:'',supabaseKey:''}, window.HC_CONFIG||{});
+const BASE = (CONFIG.supabaseUrl||'').replace(/\/$/,'');
+const KEY = CONFIG.supabaseKey||'';
+const SESSION_KEY = 'chc-admin-session';
+const TOTAL = (window.HC_GROUPS||[]).reduce((n,g)=>n+g.sections.reduce((m,s)=>m+s.questions.length,0),0);
+const $ = id => document.getElementById(id);
+const esc = s => String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const fmt = d => d ? new Date(d).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '–';
+const pageBase = () => new URL('./', location.href.split('#')[0]).href;
+let session = null, checks = [], current = null;
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),3200);}
+function show(id){['loginPanel','denyPanel','configPanel','app'].forEach(x=>$(x).classList.toggle('hidden',x!==id));}
+
+/* ---------- Anmeldung (Supabase Auth, Magic Link) ---------- */
+function saveSession(s){session=s;if(s)store.set(SESSION_KEY,JSON.stringify(s));else store.del(SESSION_KEY);}
+function readHashSession(){
+  const h=new URLSearchParams(location.hash.slice(1));
+  if(h.get('error_description')){$('loginMsg').className='msg err';$('loginMsg').textContent='Anmeldung fehlgeschlagen: '+h.get('error_description').replace(/\+/g,' ');history.replaceState(null,'',location.pathname+location.search);return null;}
+  if(!h.get('access_token'))return null;
+  const s={access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_at:Number(h.get('expires_at'))||Math.floor(Date.now()/1000)+Number(h.get('expires_in')||3600)};
+  history.replaceState(null,'',location.pathname+location.search);
+  return s;
+}
+async function refreshSession(){
+  if(!session?.refresh_token)return false;
+  const r=await fetch(`${BASE}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({refresh_token:session.refresh_token})});
+  if(!r.ok){saveSession(null);return false;}
+  const j=await r.json();saveSession({access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600)});return true;
+}
+async function token(){
+  if(!session)return null;
+  if(session.expires_at-60<Date.now()/1000&&!(await refreshSession()))return null;
+  return session.access_token;
+}
+async function rpc(fn,args={}){
+  const t=await token();if(!t){logoutLocal();throw new Error('Sitzung abgelaufen – bitte neu anmelden.');}
+  const r=await fetch(`${BASE}/rest/v1/rpc/${fn}`,{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY,Authorization:'Bearer '+t},body:JSON.stringify(args)});
+  const j=await r.json().catch(()=>null);
+  if(!r.ok){const e=new Error(j?.message||`Serverfehler (${r.status})`);e.code=j?.code;throw e;}
+  return j;
+}
+$('loginBtn').addEventListener('click',async()=>{
+  const email=$('loginEmail').value.trim().toLowerCase();const m=$('loginMsg');
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){m.className='msg err';m.textContent='Bitte eine gültige E-Mail-Adresse eingeben.';return;}
+  $('loginBtn').disabled=true;m.className='msg';m.textContent='Wird gesendet …';
+  try{
+    const redirect=location.href.split('#')[0];
+    const r=await fetch(`${BASE}/auth/v1/otp?redirect_to=${encodeURIComponent(redirect)}`,{method:'POST',headers:{'Content-Type':'application/json',apikey:KEY},body:JSON.stringify({email,create_user:true})});
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok)throw new Error(j.msg||j.message||j.error_description||`Fehler ${r.status}`);
+    m.className='msg ok';m.textContent=`Anmeldelink wurde an ${email} gesendet. Bitte öffnen Sie ihn in diesem Browser.`;
+  }catch(e){m.className='msg err';m.textContent='Senden fehlgeschlagen: '+e.message;}
+  finally{$('loginBtn').disabled=false;}
+});
+$('loginEmail').addEventListener('keydown',e=>{if(e.key==='Enter')$('loginBtn').click();});
+function logoutLocal(){saveSession(null);$('whoDot').classList.remove('on');$('whoLabel').textContent='Nicht angemeldet';$('logoutBtn').classList.add('hidden');$('refreshBtn').classList.add('hidden');show('loginPanel');}
+$('logoutBtn').addEventListener('click',async()=>{
+  try{const t=await token();if(t)await fetch(`${BASE}/auth/v1/logout`,{method:'POST',headers:{apikey:KEY,Authorization:'Bearer '+t}});}catch(e){}
+  logoutLocal();toast('Abgemeldet.');
+});
+
+/* ---------- Übersicht ---------- */
+function daysUntil(s){const m=String(s||'').match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);if(!m)return null;const d=new Date(+m[3],+m[2]-1,+m[1]);const t=new Date();t.setHours(0,0,0,0);return Math.round((d-t)/864e5);}
+function render(){
+  const q=$('search').value.trim().toLocaleLowerCase('de');
+  const list=checks.filter(c=>!q||(c.label||'').toLocaleLowerCase('de').includes(q));
+  const col={green:'var(--st-green)',yellow:'var(--st-yellow)',red:'var(--st-red)',na:'var(--st-na)'};
+  $('rows').innerHTML=list.map(c=>{
+    const k=c.counts||{};const rated=(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0);const pct=TOTAL?Math.round(100*rated/TOTAL):0;
+    const d=daysUntil(c.wahltermin);
+    return `<tr data-id="${esc(c.id)}">
+      <td><span class="lbl">${esc(c.label||'Ohne Bezeichnung')}</span><span class="sub">${esc(c.verantwortlich||'')}${c.stand?` · Stand ${esc(c.stand)}`:''}</span></td>
+      <td>${esc(c.wahltermin||'–')}${d!=null?`<span class="sub">${d>0?`in ${d.toLocaleString('de-DE')} Tagen`:d===0?'heute':'vorbei'}</span>`:''}</td>
+      <td><div class="prog" title="${rated} von ${TOTAL} bewertet">${['green','yellow','red','na'].map(s=>k[s]?`<i style="width:${100*k[s]/TOTAL}%;background:${col[s]}"></i>`:'').join('')}</div><div class="prog-txt">${rated} / ${TOTAL} bewertet (${pct} %)</div></td>
+      <td class="num"><span class="pill ${k.red?'red':'zero'}">${k.red||0}</span></td>
+      <td class="num"><span class="pill ${k.yellow?'yellow':'zero'}">${k.yellow||0}</span></td>
+      <td>${fmt(c.updated_at)}</td>
+      <td><div class="actions">
+        <button class="btn small" type="button" data-act="links">Links</button>
+        <a class="btn small" href="${esc(pageBase()+'#t='+c.view_token)}" target="_blank" rel="noopener">Ansehen</a>
+        <button class="btn small" type="button" data-act="csv">CSV</button>
+        <button class="btn small" type="button" data-act="json">JSON</button>
+      </div></td></tr>`;
+  }).join('');
+  $('empty').classList.toggle('hidden',list.length>0);
+  const tot=checks.reduce((a,c)=>{const k=c.counts||{};a.red+=k.red||0;a.yellow+=k.yellow||0;a.rated+=(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0);return a;},{red:0,yellow:0,rated:0});
+  $('kChecks').textContent=checks.length;
+  $('kProg').textContent=`${checks.length&&TOTAL?Math.round(100*tot.rated/(TOTAL*checks.length)):0} %`;
+  $('kRed').textContent=tot.red;$('kYellow').textContent=tot.yellow;
+}
+async function load(){
+  try{checks=await rpc('hc_admin_list')||[];render();}
+  catch(e){if(e.code==='42501'){show('denyPanel');return;}toast(e.message);}
+}
+$('search').addEventListener('input',render);
+$('refreshBtn').addEventListener('click',()=>load().then(()=>toast('Aktualisiert.')));
+
+/* ---------- Anlegen ---------- */
+$('createBtn').addEventListener('click',async()=>{
+  const label=$('newLabel').value.trim();if(!label){toast('Bitte eine Bezeichnung eingeben.');$('newLabel').focus();return;}
+  $('createBtn').disabled=true;
+  try{const r=await rpc('hc_admin_create',{p_label:label});$('newLabel').value='';await load();openLinks(r.id);toast('Check angelegt.');}
+  catch(e){toast('Anlegen fehlgeschlagen: '+e.message);}
+  finally{$('createBtn').disabled=false;}
+});
+$('newLabel').addEventListener('keydown',e=>{if(e.key==='Enter')$('createBtn').click();});
+
+/* ---------- Links ---------- */
+function openLinks(id){
+  current=checks.find(c=>c.id===id);if(!current)return;
+  $('linkCheck').textContent=current.label||'';
+  $('editLink').value=pageBase()+'#t='+current.edit_token;
+  $('viewLink').value=pageBase()+'#t='+current.view_token;
+  if(!$('linkDialog').open)$('linkDialog').showModal();
+}
+$('linkClose').addEventListener('click',()=>$('linkDialog').close());
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const i=$(b.dataset.copy);try{await navigator.clipboard.writeText(i.value);toast('Link kopiert.');}catch(e){i.select();toast('Link markiert – mit Strg/⌘+C kopieren.');}}));
+document.querySelectorAll('[data-rotate]').forEach(b=>b.addEventListener('click',async()=>{
+  if(!current)return;const which=b.dataset.rotate;
+  if(!confirm(`Den bisherigen ${which==='edit'?'Bearbeitungs':'Lese'}link für „${current.label}“ wirklich sperren und neu erzeugen?`))return;
+  try{await rpc('hc_admin_rotate',{p_id:current.id,p_which:which});const id=current.id;await load();openLinks(id);toast('Neuer Link erzeugt – bitte neu verteilen.');}
+  catch(e){toast(e.message);}
+}));
+
+/* ---------- Export ---------- */
+function download(name,content,type){const b=new Blob([content],{type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+const slug=s=>(s||'campaign-health-check').toLocaleLowerCase('de').replace(/[^a-z0-9äöüß]+/g,'-').replace(/^-|-$/g,'');
+const csvCell=v=>{const s=String(v??'');return /[;"\n\r]/.test(s)?`"${s.replace(/"/g,'""')}"`:s;};
+const STATUS={green:'Grün',yellow:'Gelb',red:'Rot',na:'Grau / nicht zutreffend','':'unbewertet'};
+async function exportCheck(id,kind){
+  try{
+    const r=await rpc('hc_admin_get',{p_id:id});const d=r.data||{};
+    if(kind==='json'){download(`${slug(r.label)}-antworten.json`,JSON.stringify({...d,format:'campaign-health-check-v2',exportedAt:new Date().toISOString()},null,2),'application/json');return;}
+    const lines=[];
+    lines.push(['Campaign Health Check',r.label||''].map(csvCell).join(';'));
+    for(const [k,v] of Object.entries(d.metadata||{}))lines.push([k,v].map(csvCell).join(';'));
+    lines.push(['Exportiert',fmt(new Date())].map(csvCell).join(';'),'');
+    lines.push(['Nr','Teil','Teilbereich','Block','Fragenblock','Leitfrage','Status','Sachstand','Nächste Schritte / Maßnahmen / Fristen'].map(csvCell).join(';'));
+    let n=0;
+    for(const g of window.HC_GROUPS)for(const s of g.sections)for(const q of s.questions){n++;const a=(d.answers||{})['q'+n]||{};
+      lines.push([String(n).padStart(3,'0'),g.part,g.title,s.number??'',s.title,q,STATUS[a.status||''],a.evidence||'',a.action||''].map(csvCell).join(';'));}
+    const acts=(d.actions||[]).filter(x=>Object.values(x).some(v=>v&&String(v).trim()));
+    if(acts.length){lines.push('','Maßnahmen');lines.push(['Priorität','Maßnahme','Bezug','Verantwortlich','Zieltermin','Erfolgskriterium / Status'].map(csvCell).join(';'));acts.forEach(x=>lines.push([x.priority,x.action,x.reference,x.owner,x.due,x.criterion].map(csvCell).join(';')));}
+    const decs=(d.decisions||[]).filter(x=>Object.values(x).some(v=>v&&String(v).trim()));
+    if(decs.length){lines.push('','Entscheidungen');lines.push(['Datum','Entscheidung','Verantwortung','Termin','Status'].map(csvCell).join(';'));decs.forEach(x=>lines.push([x.date,x.decision,x.owner,x.due,x.status].map(csvCell).join(';')));}
+    download(`${slug(r.label)}-health-check.csv`,'﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');
+  }catch(e){toast('Export fehlgeschlagen: '+e.message);}
+}
+$('rows').addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const id=b.closest('tr').dataset.id;
+  if(b.dataset.act==='links')openLinks(id);else exportCheck(id,b.dataset.act);});
+$('exportOverview').addEventListener('click',()=>{
+  const lines=[['Landesverband / Wahl','Wahltermin','Gesamtverantwortliche/r','Bewertet','Grün','Gelb','Rot','Grau','Letzte Änderung','Angelegt'].map(csvCell).join(';')];
+  checks.forEach(c=>{const k=c.counts||{};lines.push([c.label,c.wahltermin,c.verantwortlich,(k.green||0)+(k.yellow||0)+(k.red||0)+(k.na||0),k.green||0,k.yellow||0,k.red||0,k.na||0,fmt(c.updated_at),fmt(c.created_at)].map(csvCell).join(';'));});
+  download(`health-check-uebersicht-${new Date().toISOString().slice(0,10)}.csv`,'﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');
+});
+
+/* ---------- Start ---------- */
+(async function init(){
+  if(!BASE||!KEY){show('configPanel');return;}
+  const fromHash=readHashSession();
+  if(fromHash)saveSession(fromHash);else{try{session=JSON.parse(store.get(SESSION_KEY)||'null');}catch(e){session=null;}}
+  if(!session){show('loginPanel');return;}
+  try{
+    const me=await rpc('hc_admin_me');
+    $('whoLabel').textContent=`Angemeldet: ${me.email||''}`;$('whoDot').classList.add('on');$('logoutBtn').classList.remove('hidden');
+    if(!me.is_admin){show('denyPanel');return;}
+    $('refreshBtn').classList.remove('hidden');show('app');await load();
+  }catch(e){logoutLocal();$('loginMsg').className='msg err';$('loginMsg').textContent=e.message;}
+})();
+</script>
+</body>
+</html>

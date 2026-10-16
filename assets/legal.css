@@ -5,8 +5,8 @@ a{color:var(--tuerkis-dark);text-underline-offset:2px}a:hover{color:var(--blau)}
 a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .hero{background:var(--tuerkis);color:var(--weiss)}
 .hero-inner{max-width:860px;margin:0 auto;padding:20px 24px 34px}
-.brandbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:30px}
-.wordmark{display:inline-block;background:var(--weiss);color:var(--union-schwarz);font:800 20px/1 var(--font-head);padding:8px 11px 7px;text-decoration:none}
+.brandbar{display:flex;align-items:center;gap:24px;flex-wrap:wrap;margin-bottom:30px}
+.logo{display:block;height:44px;width:auto}
 .back{margin-left:auto;color:var(--weiss);font:700 13px var(--font-head);text-decoration:none;border:1px solid rgba(255,255,255,.55);border-radius:999px;padding:7px 14px}
 .back:hover{background:rgba(255,255,255,.14);color:var(--weiss)}
 .hl{font-size:clamp(2rem,5vw,3rem);line-height:1;margin:0}
