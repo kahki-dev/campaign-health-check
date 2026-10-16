@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#52b7c1">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Campaign Health Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ============ CDU Corporate Design 2023 – Tokens ============ */
+:root{
+  color-scheme:light;
+  --tuerkis:#52b7c1;--blau:#2d3c4b;--gold:#ffa600;--weiss:#fff;
+  --union-schwarz:#1b191d;--union-rot:#bf111b;
+  --tuerkis-10:#eef8f9;--tuerkis-25:#d4edef;--tuerkis-60:#97d4da;--tuerkis-dark:#2f6f7e;
+  --blau-10:#eaeced;--blau-25:#cacfd2;--blau-60:#818b95;
+  --page:#f5f6f6;--surface:#fff;--ink:#2d3c4b;--text-2:#4d5a68;--muted:#6b7682;--grid:#e1e5e8;--ring:rgba(45,60,75,.12);
+  /* Ampel (funktional, nicht Markenfarben) */
+  --st-green:#2e7d4f;--st-green-bg:#e3f1e8;--st-yellow:#c98a00;--st-yellow-bg:#fdf1d6;--st-red:#bf111b;--st-red-bg:#f8e3e4;--st-na:#818b95;--st-na-bg:#eaeced;
+  --font-head:'Inter',system-ui,-apple-system,"Segoe UI",sans-serif;
+  --font-copy:'IBM Plex Serif',Georgia,"Times New Roman",serif;
+  --radius:14px;--shadow:0 2px 10px rgba(45,60,75,.06);
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font-copy);line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+h1,h2,h3,h4{font-family:var(--font-head);letter-spacing:-.01em;color:var(--blau);margin:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.hidden{display:none!important}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px 72px}
+
+/* ============ Hero ============ */
+.hero{position:relative;overflow:hidden;background:var(--tuerkis);color:var(--weiss)}
+.hero-inner{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:22px 24px 46px}
+.bogen-bg{position:absolute;right:-3%;bottom:-2px;width:58%;max-width:780px;color:#7cc9d1;opacity:.55;pointer-events:none}
+.brandbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:44px}
+.wordmark{display:inline-block;background:var(--weiss);color:var(--union-schwarz);font:800 22px/1 var(--font-head);letter-spacing:-.01em;padding:9px 12px 8px}
+.brand-org{font:600 13px/1.35 var(--font-head);color:var(--weiss)}
+.brand-org span{display:block;font-weight:400;opacity:.92}
+.hl{font-size:clamp(2.3rem,6vw,4.2rem);line-height:1;margin:0}
+.hl span{display:inline-block;background:var(--blau);color:var(--weiss);font-family:var(--font-head);font-weight:800;letter-spacing:-.01em;padding:.1em .32em .14em;line-height:1.08}
+.hl .indent{margin-left:.9em}
+.subline{display:inline-block;margin:0 0 0 1.4em;background:var(--gold);color:var(--blau);font:400 clamp(1rem,1.6vw,1.2rem)/1.35 var(--font-copy);padding:.4em .9em}
+.hero-meta{margin-top:26px;font:500 12px/1.4 var(--font-head);letter-spacing:.02em;color:var(--weiss);opacity:.95}
+.stoerer{position:absolute;right:max(24px,calc((100vw - 1240px)/2 + 24px));top:26px;z-index:2;width:128px;height:128px;border-radius:50%;background:var(--gold);display:grid;place-items:center;text-align:center;color:var(--weiss);font:800 15px/1.1 var(--font-head);box-shadow:0 6px 18px rgba(45,60,75,.18)}
+.stoerer>span{transform:rotate(-10deg);display:block;padding:0 10px}
+.stoerer b{display:block;font-size:36px;line-height:1;color:var(--union-schwarz);margin-bottom:2px}
+
+/* ============ Sync-Leiste ============ */
+.syncbar{background:var(--blau);color:var(--weiss)}
+.syncbar-inner{max-width:1240px;margin:0 auto;padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;font:500 13px/1.3 var(--font-head)}
+.sync-status{display:inline-flex;align-items:center;gap:8px;min-height:30px}
+.sync-dot{width:9px;height:9px;border-radius:50%;background:var(--blau-60);flex:none}
+.sync-status[data-state="saved"] .sync-dot{background:#5fd08a}
+.sync-status[data-state="saving"] .sync-dot,.sync-status[data-state="dirty"] .sync-dot{background:var(--gold)}
+.sync-status[data-state="error"] .sync-dot{background:#ff6b6b}
+.sync-status[data-state="view"] .sync-dot{background:var(--tuerkis)}
+.sync-label{opacity:.95}
+.sync-check{margin-left:auto;font-weight:600;opacity:.9;max-width:44ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-ghost{border:1px solid rgba(255,255,255,.45);background:transparent;color:var(--weiss);border-radius:999px;padding:6px 14px;font:700 12.5px var(--font-head)}
+.btn-ghost:hover{background:rgba(255,255,255,.12)}
+
+/* ============ Banner ============ */
+.banner{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--ring);border-left:6px solid var(--gold);border-radius:var(--radius);padding:16px 18px;margin:22px 0 0;box-shadow:var(--shadow);font:14px/1.5 var(--font-head);color:var(--text-2)}
+.banner strong{color:var(--blau)}
+.banner.info{border-left-color:var(--tuerkis)}
+.banner.error{border-left-color:var(--union-rot)}
+
+/* ============ Panels ============ */
+.intro{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(300px,.7fr);gap:18px;margin:26px 0}
+.panel{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 24px}
+.panel h2{font-size:1.3rem;font-weight:800;margin-bottom:10px}
+.panel h3{font-size:1.05rem;font-weight:800;margin:18px 0 8px}
+.panel p{margin:0 0 10px;color:var(--text-2)}
+.panel p:last-child{margin-bottom:0}
+.support-panel{grid-column:1/-1;background:var(--tuerkis-10);border-color:var(--tuerkis-25)}
+.support-panel .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.meta-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 18px;margin-top:18px}
+.field-label{display:block;font:700 11px/1.35 var(--font-head);letter-spacing:.04em;color:var(--text-2);margin-bottom:5px}
+.meta-field{width:100%;border:0;border-bottom:1px solid var(--blau-25);background:transparent;padding:8px 2px;outline:none;border-radius:0;font:15px var(--font-copy)}
+.meta-field:focus{border-bottom:2px solid var(--tuerkis)}
+.status-key{display:grid;grid-template-columns:1fr;gap:9px;margin:6px 0 12px}
+.key{display:flex;align-items:center;gap:10px;color:var(--text-2);font:14px/1.35 var(--font-head)}
+.key strong{color:var(--blau)}
+.dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex:none}
+.dot.green{background:var(--st-green)}.dot.yellow{background:var(--st-yellow)}.dot.red{background:var(--st-red)}.dot.na{background:var(--st-na)}
+.small-note{font:13px/1.5 var(--font-head)!important;color:var(--muted)!important}
+
+/* ============ Kennzahlen ============ */
+.stats{display:grid;grid-template-columns:1.4fr repeat(4,minmax(90px,.6fr));gap:12px;margin:8px 0 22px}
+.stat{background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-top:4px solid var(--blau-25)}
+.stat.s-green{border-top-color:var(--st-green)}.stat.s-yellow{border-top-color:var(--st-yellow)}.stat.s-red{border-top-color:var(--st-red)}.stat.s-na{border-top-color:var(--st-na)}.stat.s-prog{border-top-color:var(--tuerkis)}
+.stat strong{display:block;font:800 26px/1.05 var(--font-head);color:var(--blau);letter-spacing:-.01em}
+.stat span{display:block;margin-top:4px;font:600 12px/1.25 var(--font-head);color:var(--muted)}
+.progress-line{height:8px;background:var(--tuerkis-10);border-radius:999px;margin-top:10px;overflow:hidden}
+.progress-line i{display:block;height:100%;width:0;background:var(--tuerkis);border-radius:999px;transition:width .25s}
+
+/* ============ Toolbar ============ */
+.toolbar{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:minmax(220px,1fr) 210px auto;gap:12px;align-items:center;background:rgba(245,246,246,.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--grid);padding:12px 0;margin:0 0 14px}
+.searchbox,.filterbox{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--blau-25);border-radius:999px;padding:0 14px;min-height:42px}
+.searchbox input,.filterbox select{width:100%;border:0;background:transparent;outline:0;font:14px var(--font-head);min-height:40px}
+.searchbox:focus-within,.filterbox:focus-within{border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.22)}
+.toolbar-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--blau-25);background:var(--surface);color:var(--blau);border-radius:999px;padding:9px 15px;font:700 12.5px var(--font-head);transition:background .15s,border-color .15s}
+.btn:hover{background:var(--tuerkis-10);border-color:var(--tuerkis)}
+.btn.primary{background:var(--blau);border-color:var(--blau);color:var(--weiss)}
+.btn.primary:hover{background:#3a4d60}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--blau)}
+.btn.gold:hover{background:#ffb627}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.btn-ghost:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+/* ============ Checkliste ============ */
+.part{margin:18px 0 0;background:var(--surface);border:1px solid var(--ring);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.part>summary{display:grid;grid-template-columns:auto minmax(0,1fr) auto 22px;align-items:center;gap:14px;list-style:none;padding:16px 18px;cursor:pointer}
+.part>summary::-webkit-details-marker,.topic>summary::-webkit-details-marker{display:none}
+.part-letter{display:grid;place-items:center;width:44px;height:44px;background:var(--blau);color:var(--weiss);font:800 22px/1 var(--font-head)}
+.part-name{font:800 1.22rem/1.25 var(--font-head);color:var(--blau);letter-spacing:-.01em}
+.part-name small{display:block;font:700 11px/1.2 var(--font-head);letter-spacing:.06em;color:var(--tuerkis-dark);margin-bottom:4px}
+.part-count{font:600 12px var(--font-head);color:var(--muted);white-space:nowrap;text-align:right}
+.mini-bar{display:flex;height:6px;width:120px;border-radius:999px;overflow:hidden;background:var(--blau-10);margin-top:6px;margin-left:auto}
+.mini-bar i{display:block;height:100%}
+.part>summary:after,.topic>summary:after{content:"+";font:400 22px/1 var(--font-head);color:var(--tuerkis-dark)}
+.part[open]>summary:after,.topic[open]>summary:after{content:"−"}
+.part-content{padding:0 18px 16px}
+.topic{border-top:1px solid var(--grid)}
+.topic>summary{list-style:none;display:grid;grid-template-columns:minmax(0,1fr) auto 22px;align-items:center;gap:14px;cursor:pointer;padding:13px 6px;font:700 1rem/1.35 var(--font-head);color:var(--blau)}
+.topic>summary:hover{color:var(--tuerkis-dark)}
+.topic-num{display:inline-block;min-width:28px;color:var(--tuerkis-dark)}
+.topic-meta{display:flex;align-items:center;gap:6px;font:600 11.5px var(--font-head);color:var(--muted)}
+.pip{width:8px;height:8px;border-radius:50%;display:inline-block}
+.topic-body{padding:2px 0 14px}
+.check-card{background:var(--surface);border:1px solid var(--grid);border-left:5px solid var(--blau-25);border-radius:10px;margin:10px 0;padding:14px 16px}
+.check-card.status-green{border-left-color:var(--st-green)}
+.check-card.status-yellow{border-left-color:var(--st-yellow)}
+.check-card.status-red{border-left-color:var(--st-red)}
+.check-card.status-na{border-left-color:var(--st-na)}
+.question-line{display:grid;grid-template-columns:40px minmax(0,1fr) 210px;align-items:start;gap:12px;margin-bottom:12px}
+.q-index{font:700 12px var(--font-head);color:var(--tuerkis-dark);padding-top:3px}
+.question{font-size:15.5px;line-height:1.45;color:var(--blau)}
+.status-select{width:100%;padding:8px 10px;border:1px solid var(--blau-25);border-radius:8px;background:var(--surface);font:600 13px var(--font-head)}
+.status-select.v-green{background:var(--st-green-bg);border-color:var(--st-green);color:#1f5a38}
+.status-select.v-yellow{background:var(--st-yellow-bg);border-color:var(--st-yellow);color:#7a5400}
+.status-select.v-red{background:var(--st-red-bg);border-color:var(--st-red);color:#8e0d14}
+.status-select.v-na{background:var(--st-na-bg);border-color:var(--st-na);color:#4d5a68}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;padding-left:52px}
+.field-grid label{display:block}
+.field-grid textarea,.log-grid input,.log-grid textarea{width:100%;border:1px solid var(--blau-25);border-radius:8px;background:#fbfcfc;padding:9px 10px;font:13.5px/1.45 var(--font-head);color:var(--blau)}
+.field-grid textarea{min-height:58px;resize:vertical}
+.field-grid textarea::placeholder{color:#9aa4ad}
+.field-grid textarea:focus,.log-grid input:focus,.log-grid textarea:focus{outline:none;border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.2);background:#fff}
+.empty-state{display:none;padding:30px;text-align:center;border:1px dashed var(--blau-25);border-radius:var(--radius);color:var(--text-2);background:var(--surface);margin:14px 0;font:14px var(--font-head)}
+
+/* ============ Maßnahmen-Log ============ */
+.log-panel{margin-top:26px}
+.log-panel>details>summary{cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.log-panel>details>summary::-webkit-details-marker{display:none}
+.log-panel>details>summary:after{content:"+";font:400 22px/1 var(--font-head);color:var(--tuerkis-dark)}
+.log-panel>details[open]>summary:after{content:"−"}
+.log-panel>details>summary h2{margin:0}
+.log-intro{margin-top:10px!important}
+.log-list{display:grid;gap:12px;margin:12px 0}
+.log-card{background:var(--tuerkis-10);border:1px solid var(--tuerkis-25);border-radius:10px;padding:14px 16px}
+.log-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.log-card-head strong{font:800 13px var(--font-head);color:var(--blau)}
+.log-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.log-grid label{display:block}
+.log-grid textarea{min-height:48px;resize:vertical}
+.remove-row{border:0;background:transparent;color:var(--union-rot);text-decoration:underline;font:600 12px var(--font-head)}
+
+/* ============ Anlegen / Dialog ============ */
+.create-grid{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:14px;align-items:end;margin-top:14px}
+.text-input{width:100%;border:1px solid var(--blau-25);border-radius:8px;padding:10px 12px;font:14px var(--font-head);background:#fff}
+.text-input:focus{outline:none;border-color:var(--tuerkis);box-shadow:0 0 0 3px rgba(82,183,193,.2)}
+dialog{border:0;border-radius:var(--radius);padding:0;max-width:640px;width:calc(100% - 32px);box-shadow:0 20px 60px rgba(27,25,29,.35);color:var(--ink)}
+dialog::backdrop{background:rgba(45,60,75,.55)}
+.dlg-head{background:var(--tuerkis);padding:18px 22px}
+.dlg-head h2{display:inline-block;background:var(--blau);color:#fff;padding:.12em .35em;font-size:1.35rem}
+.dlg-body{padding:18px 22px 22px;font:14px/1.5 var(--font-head);color:var(--text-2)}
+.link-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:6px 0 16px}
+.link-row input{font:12.5px/1.3 ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--blau)}
+.dlg-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--blau);color:#fff;padding:11px 18px;border-radius:999px;font:600 13px var(--font-head);box-shadow:0 8px 24px rgba(27,25,29,.25);transition:opacity .2s,transform .2s;z-index:50;pointer-events:none;max-width:calc(100% - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Leseansicht */
+body.readonly .edit-only{display:none!important}
+body.readonly textarea,body.readonly input:not([type=search]):not(.link-input),body.readonly .status-select{pointer-events:none;background:var(--page)!important}
+
+footer.foot{background:var(--blau);color:#cfd6dc;font:12.5px/1.5 var(--font-head)}
+footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+@media(max-width:960px){.toolbar{grid-template-columns:1fr 190px}.toolbar-actions{grid-column:1/-1;justify-content:flex-start}.intro{grid-template-columns:1fr}.support-panel .cols{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stats .s-prog{grid-column:1/-1}.stoerer{width:104px;height:104px;font-size:13px}.stoerer b{font-size:28px}.create-grid{grid-template-columns:1fr 1fr}.create-grid .btn{grid-column:1/-1}}
+@media(max-width:640px){.wrap{padding:0 16px 48px}.hero-inner{padding:18px 16px 34px}.brandbar{margin-bottom:30px;padding-right:100px}.stoerer{top:16px;right:16px;width:88px;height:88px;font-size:11px}.stoerer b{font-size:22px}.subline{margin-left:.6em}.syncbar-inner{padding:10px 16px}.sync-check{margin-left:0;flex-basis:100%;order:3}.panel{padding:16px}.meta-grid{grid-template-columns:1fr 1fr}.toolbar{position:static;grid-template-columns:1fr;gap:8px}.toolbar-actions .btn{flex:1 1 auto}.stats{grid-template-columns:repeat(2,1fr)}.question-line{grid-template-columns:30px minmax(0,1fr);gap:8px}.status-wrap{grid-column:2;max-width:240px}.field-grid{grid-template-columns:1fr;padding-left:38px}.part>summary{grid-template-columns:auto minmax(0,1fr) 18px;padding:13px 12px;gap:10px}.part>summary .part-count{display:none}.part-letter{width:36px;height:36px;font-size:18px}.part-name{font-size:1.05rem}.part-content{padding:0 10px 12px}.topic>summary{grid-template-columns:minmax(0,1fr) 18px;font-size:.95rem}.topic-meta{display:none}.log-grid{grid-template-columns:1fr 1fr}.check-card{padding:12px 10px}.create-grid{grid-template-columns:1fr}}
+@media(max-width:400px){.meta-grid,.log-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important}}
+@media print{
+  body{background:#fff;font-size:10.5pt}
+  .syncbar,.toolbar,.empty-state,.remove-row,.add-row,.banner,.create-panel,.stoerer,.bogen-bg,dialog,.toast,footer.foot{display:none!important}
+  .hero{background:#fff;color:var(--blau);border-bottom:3px solid var(--tuerkis)}.hero-inner{padding:8px 0 16px}.brand-org{color:var(--blau)}.wordmark{border:1px solid var(--blau)}.hero-meta{color:var(--blau)}
+  .hl span,.part-letter{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .wrap{max-width:none;padding:0}.intro{grid-template-columns:1fr 1fr}.panel,.stat,.part{box-shadow:none}
+  .part,.topic{break-inside:auto}.part:not([open])>.part-content,.topic:not([open])>.topic-body{display:block!important}
+  .part>summary:after,.topic>summary:after{display:none}
+  .check-card{break-inside:avoid;padding:8px 10px}.log-panel{break-before:page}.log-panel details>*{display:block!important}.log-card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="hero">
+  <svg class="bogen-bg" viewBox="0 0 300 160" fill="currentColor" aria-hidden="true">
+    <path d="M10 160 L10 120 Q60 112 90 104 L90 160 Z"/>
+    <path d="M105 160 L105 99 Q155 86 185 74 L185 160 Z"/>
+    <path d="M200 160 L200 69 Q255 50 290 32 L290 160 Z"/>
+  </svg>
+  <div class="stoerer" id="stoerer" aria-live="polite"><span id="stoererText"><b>141</b>Leit&shy;fragen</span></div>
+  <div class="hero-inner">
+    <div class="brandbar">
+      <span class="wordmark" aria-label="CDU">CDU</span>
+      <span class="brand-org">Konrad-Adenauer-Haus<span>Strategische Kommunikation &amp; Kampagne</span></span>
+    </div>
+    <h1 class="hl"><span>Campaign</span><br><span class="indent">Health Check</span></h1>
+    <p class="subline">Einheitlicher Prüf- und Steuerungsrahmen für Landtagswahlkämpfe</p>
+    <div class="hero-meta">Wahlkampf · Steuerung · Lernen — interaktive Checkliste</div>
+  </div>
+</header>
+
+<div class="syncbar" role="region" aria-label="Speicherstatus">
+  <div class="syncbar-inner">
+    <span class="sync-status" id="syncStatus" data-state="local"><i class="sync-dot"></i><span class="sync-label" id="syncLabel">Lokaler Modus</span></span>
+    <button class="btn-ghost hidden" type="button" id="shareBtn">Links teilen</button>
+    <button class="btn-ghost hidden" type="button" id="retryBtn">Erneut speichern</button>
+    <span class="sync-check" id="syncCheck"></span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div id="bannerHost"></div>
+
+  <section class="panel create-panel hidden" id="createPanel" style="margin-top:22px">
+    <h2>Neuen Health Check anlegen</h2>
+    <p>Legt einen gemeinsamen Check in der Datenbank an. Sie erhalten einen <strong>Bearbeitungslink</strong> für das Kampagnenteam und einen <strong>Leselink</strong> für das KAH. Bereits auf dieser Seite eingetragene Antworten werden übernommen.</p>
+    <div class="create-grid">
+      <label><span class="field-label">Bezeichnung</span><input class="text-input" id="createLabel" placeholder="z. B. LTW Sachsen-Anhalt 2026" autocomplete="off"></label>
+      <label><span class="field-label">Anlage-Schlüssel (vom KAH)</span><input class="text-input" id="createKey" type="password" autocomplete="off"></label>
+      <button class="btn primary" type="button" id="createBtn">Check anlegen</button>
+    </div>
+  </section>
+
+  <section class="intro" aria-label="Anwendung, Bewertung und Zusammenarbeit mit dem KAH">
+    <div class="panel">
+      <h2>Anwendung und Rahmendaten</h2>
+      <p>Der Campaign Health Check prüft die Arbeitsfähigkeit der Kampagne sowie die strategische Plausibilität und Steuerung ihrer Maßnahmen. Er umfasst sechs Teile mit 22 Fragenblöcken und 141 Leitfragen. Zu jeder Leitfrage sind der aktuelle Sachstand, ein Ampelstatus und – falls offen – nächste Schritte, Maßnahmen und Fristen festzuhalten.</p>
+      <div class="meta-grid">
+        <label><span class="field-label">Bundesland / Wahl</span><input class="meta-field" data-meta="Bundesland / Wahl" autocomplete="off"></label>
+        <label><span class="field-label">Wahltermin (TT.MM.JJJJ)</span><input class="meta-field" data-meta="Wahltermin" autocomplete="off" placeholder="z. B. 06.09.2026"></label>
+        <label><span class="field-label">Stand der Erhebung</span><input class="meta-field" data-meta="Stand der Erhebung" autocomplete="off"></label>
+        <label><span class="field-label">Gesamtverantwortliche/r</span><input class="meta-field" data-meta="Gesamtverantwortliche/r" autocomplete="off"></label>
+        <label><span class="field-label">Beteiligte Bereiche</span><input class="meta-field" data-meta="Beteiligte Bereiche" autocomplete="off"></label>
+        <label><span class="field-label">Nächste Aktualisierung</span><input class="meta-field" data-meta="Nächste Aktualisierung" autocomplete="off"></label>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Bewertungslogik</h2>
+      <div class="status-key">
+        <div class="key"><i class="dot green"></i><span><strong>Grün</strong> · geklärt und arbeitsfähig</span></div>
+        <div class="key"><i class="dot yellow"></i><span><strong>Gelb</strong> · teilweise geklärt / Risiko</span></div>
+        <div class="key"><i class="dot red"></i><span><strong>Rot</strong> · ungeklärt / akut gefährdet</span></div>
+        <div class="key"><i class="dot na"></i><span><strong>Grau</strong> · nicht zutreffend; bitte begründen</span></div>
+      </div>
+      <p class="small-note">Bei Gelb oder Rot immer nächste Schritte, Maßnahmen und Fristen eintragen.</p>
+    </div>
+    <div class="panel support-panel">
+      <h2>Zusammenarbeit mit dem KAH</h2>
+      <div class="cols">
+        <p>Der Health Check unterstützt die Abstimmung zwischen dem wahlkampfführenden Landesverband und dem Konrad-Adenauer-Haus. Er macht sichtbar, wo und in welchem Umfang Unterstützung durch das KAH sinnvoll ist und gewünscht wird.</p>
+        <p>Im Rahmen der Zusammenarbeit stellt das KAH den beteiligten Landesverbänden eine Social-Media-Konkurrenzanalyse zur Verfügung. Sie vergleicht Organisationsaccounts sowie Abgeordneten- und Kandidatenprofile und betrachtet die Social-Media-Kanäle der Spitzenkandidaten vertieft.</p>
+        <p>Die Analyse verbindet Kennzahlen mit qualitativer Experteneinordnung. Ergänzend erhalten die Landesverbände praxisorientierte Playbooks zur Distribution ihrer Inhalte sowie eine Präsentation der Analyseergebnisse mit fachlicher Einordnung.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats" aria-label="Fortschritt" aria-live="polite">
+    <div class="stat s-prog"><strong id="progressText">0 / 0</strong><span>Leitfragen bewertet</span><div class="progress-line" role="progressbar" aria-label="Bewertungsfortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="progressBar"></i></div></div>
+    <div class="stat s-green"><strong id="greenCount">0</strong><span>Grün</span></div>
+    <div class="stat s-yellow"><strong id="yellowCount">0</strong><span>Gelb</span></div>
+    <div class="stat s-red"><strong id="redCount">0</strong><span>Rot</span></div>
+    <div class="stat s-na"><strong id="naCount">0</strong><span>Grau / n. zutr.</span></div>
+  </section>
+
+  <div class="toolbar" role="region" aria-label="Checkliste durchsuchen und verwalten">
+    <label class="searchbox"><span aria-hidden="true">⌕</span><span class="sr-only">Leitfragen durchsuchen</span><input id="search" type="search" placeholder="Leitfragen durchsuchen …"></label>
+    <label class="filterbox"><span class="sr-only">Nach Status filtern</span><select id="statusFilter"><option value="all">Alle Bewertungen</option><option value="unrated">Noch unbewertet</option><option value="green">Grün</option><option value="yellow">Gelb</option><option value="red">Rot</option><option value="na">Grau / nicht zutreffend</option></select></label>
+    <div class="toolbar-actions">
+      <button class="btn" type="button" id="openAll">Alle öffnen</button>
+      <button class="btn" type="button" id="closeAll">Einklappen</button>
+      <button class="btn" type="button" id="printBtn">Drucken</button>
+      <button class="btn" type="button" id="exportBtn">Exportieren</button>
+      <label class="btn edit-only" for="importFile">Importieren</label><input class="sr-only" id="importFile" type="file" accept="application/json,.json">
+    </div>
+  </div>
+  <div id="checklist"></div>
+  <div id="noResults" class="empty-state" role="status">Keine passenden Leitfragen gefunden. Suchbegriff oder Statusfilter ändern.</div>
+
+  <section class="panel log-panel">
+    <details id="logDetails">
+      <summary><h2>Priorisierte Maßnahmen und Entscheidungen</h2></summary>
+      <p class="log-intro">Gelbe und rote Befunde in konkrete, priorisierte Maßnahmen übersetzen. Erfolgskriterium und Termin möglichst überprüfbar formulieren.</p>
+      <h3>Maßnahmen</h3>
+      <div id="actions" class="log-list"></div>
+      <button class="btn add-row edit-only" type="button" id="addAction">+ Maßnahme ergänzen</button>
+      <h3 style="margin-top:24px">Entscheidungen der Steuerungsrunde</h3>
+      <div id="decisions" class="log-list"></div>
+      <button class="btn add-row edit-only" type="button" id="addDecision">+ Entscheidung ergänzen</button>
+    </details>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>CDU Deutschlands · Konrad-Adenauer-Haus · Strategische Kommunikation &amp; Kampagne</span>
+    <span>Vertraulich – nur für den internen Gebrauch</span>
+  </div>
+</footer>
+
+<dialog id="shareDialog" aria-labelledby="shareTitle">
+  <div class="dlg-head"><h2 id="shareTitle">Links zu diesem Check</h2></div>
+  <div class="dlg-body">
+    <div id="editLinkWrap">
+      <span class="field-label">Bearbeitungslink – nur an das Kampagnenteam weitergeben</span>
+      <div class="link-row"><input class="text-input link-input" id="editLink" readonly><button class="btn primary" type="button" data-copy="editLink">Kopieren</button></div>
+    </div>
+    <span class="field-label">Leselink – z. B. für das KAH</span>
+    <div class="link-row"><input class="text-input link-input" id="viewLink" readonly><button class="btn" type="button" data-copy="viewLink">Kopieren</button></div>
+    <p class="small-note">Wer einen Link besitzt, hat Zugriff – ohne Anmeldung. Links daher nur über interne Kanäle teilen. Ein kompromittierter Link kann im Backend jederzeit gesperrt und ersetzt werden.</p>
+    <div class="dlg-actions"><button class="btn primary" type="button" id="shareClose">Schließen</button></div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="config.js"></script>
+<script>
+/* Konfiguration kommt aus config.js (siehe README). Leer = lokaler Modus. */
+const CONFIG = Object.assign({supabaseUrl:'',supabaseKey:''}, window.HC_CONFIG||{});
+
+const groups = [{"part":"A","title":"Strategie, Kampagnenplanung und Wahlkampforganisation","sections":[{"number":1,"title":"Wahlkontext, strategisches Ziel und Zielgruppen","questions":["Wurde die Ausgangslage beschrieben (Wahlsystem, letzte Wahlergebnisse, Wählerpotenzial, aktuelle politische Lage, Themenwahrnehmung, Kompetenzen, Kandidatenbekanntheit und -image, bekannte Unsicherheiten, Mobilisierungsfähigkeit der Partei) und wenn ja, wie?","Wurde ein Wahlziel in überprüfbaren Zielkorridoren beschrieben (z. B. Stimmen, Mandate oder Regierungsoptionen), einschließlich plausibler Szenarien und Annahmen?","Wie wurden prioritäre Wählergruppen und Regionen festgelegt und nachvollziehbar begründet?","Inwiefern wird unterschieden, ob und wo die Kampagne Unterstützende halten, Unentschlossene überzeugen oder Wahlberechtigte mobilisieren will?","Inwieweit wurden strategische Prioritäten und bewusste Verzichtsentscheidungen benannt (was wird nicht oder nachrangig verfolgt)?","Auf welche Weise werden strategische Annahmen, Risiken und alternative Szenarien regelmäßig überprüft?","Inwieweit besteht im Bereich Wahlkontext, strategisches Ziel und Zielgruppen konkreter Unterstützungsbedarf durch das KAH?"]},{"number":2,"title":"Kampagnenplanung und Steuerung","questions":["Gibt es ein abgestimmtes Playbook bzw. Regiebuch mit Rollen, Abläufen, Freigaben und Kontaktwegen?","Inwieweit wurden Kampagnenphasen, Ziele, Maßnahmen, Meilensteine, Abhängigkeiten und Entscheidungstore in einem integrierten Zeitplan festgehalten?","Inwieweit wurden Entscheidungsrechte, Freigaben und Eskalationswege zwischen Kampagnenleitung, LGS, Kandidat/in, Partei und KAH eindeutig definiert?","Gibt es eine/n explizite/n Wahlkampfleiter/in mit klarem Mandat (wenn ja, wer)?","Wer gehört zum Kernteam, und sind Zuständigkeiten sowie Vertretungen dokumentiert?","Wie häufig tagt das Kernteam, wie werden Entscheidungen protokolliert und wie werden offene Punkte nachverfolgt?","Wie werden kurzfristige politische Ereignisse bewertet und in Entscheidungen oder Kampagnenanpassungen übersetzt?","Wie werden neuralgische Termine und mögliche Krisen und Kipppunkte der Kampagne frühzeitig markiert und vorbereitet?","Inwieweit besteht im Bereich Kampagnenplanung und Steuerung konkreter Unterstützungsbedarf durch das KAH?"]},{"number":3,"title":"Organisation, Ressourcen und Agentur","questions":["Wie ist die LGS personell aufgestellt (Anzahl Mitarbeiter, Aufgaben und Funktionen, Wahlkampf-/Kampagnenerfahrung)?","Wo liegen Ressourcen- oder Kompetenzlücken, und wie werden sie geschlossen (z. B. durch Stellenaufwuchs, Schulungen vorhandener Mitarbeiter, externe Unterstützung)?","Sind die Arbeits- und Abstimmungswege mit Kreisverbänden, Geschäftsstellen und Kandidierenden geklärt?","Gibt es ein Agenturbriefing und wenn ja, was beinhaltet es (z. B. Ausgangslage, strategisches Ziel, Zielgruppen, Aufgaben, Freigabewege)?","Bis wann erfolgt die Agenturauswahl, wer entscheidet und nach welchen Kriterien?","Wird für den Wahlkampf gemeinsam mit einer Agentur ein eigenes Corporate Design entwickelt? Falls ja: Inwieweit sind Abweichungen vom verbindlichen Corporate Design der CDU Deutschlands vorgesehen, insbesondere bei Logo und Farbspektrum?","Wer ist zentraler Ansprechpartner aus dem Kampagnenteam für die Agentur und hat er/sie Erfahrung in der Agentursteuerung?","Welche Aufgaben werden intern erledigt und welche extern vergeben – einschließlich einer klaren Schnittstellen- und Übergaberegelung?","Wie wird die Agentur in die LGS und die regelmäßige Kampagnensteuerung eingebunden?","Sind sämtliche Kosten, Liefergegenstände, Nutzungsrechte, Änderungsrunden und Eskalationswege mit der Agentur und ggf. weiteren externen Dienstleistern geregelt?","Inwieweit besteht im Bereich Organisation, Ressourcen und Agentur konkreter Unterstützungsbedarf durch das KAH?"]}]},{"part":"B","title":"Erkenntnisse, Wettbewerb und politische Erzählung","sections":[{"number":4,"title":"Wählerkenntnis, Demoskopie und Message-Testing","questions":["Ist eine Grundlagenstudie oder sind einzelne Umfragen geplant, und welche konkreten Entscheidungen sollen sie unterstützen?","Sind Zielpopulation, Stichprobe, Erhebungszeitraum, Gewichtung, Unsicherheit und Grenzen der Aussagekraft dokumentiert?","Sind Anbieter, Auftrag, Auswertung, Zeitplan und Ergebnisformate festgelegt?","Sind Fokusgruppen oder qualitative Gespräche geplant, mit klarer Fragestellung und passender Auswahl der Teilnehmenden? Worin liegt das jeweilige Erkenntnisinteresse?","Inwiefern werden qualitative Befunde, Erkenntnisse aus Umfragen, Wahl- und Regionaldaten sowie Rückmeldungen aus dem Feld (z. B. aus Veranstaltungen) miteinander verglichen und zu einem Gesamtbild zusammengetragen?","Wie werden zentrale Themen, Botschaften und Werbemittel vor breiter Ausspielung geprüft oder in begrenztem Umfang getestet?","Inwieweit besteht im Bereich Wählerkenntnis, Demoskopie und Message-Testing konkreter Unterstützungsbedarf durch das KAH?"]},{"number":5,"title":"Konkurrenzanalyse und Umfeldbeobachtung","questions":["Wer verantwortet die laufende Analyse von Wettbewerbern, Spitzenkandidaten und politischem Umfeld?","Wie und von wem werden öffentliche Positionierungen, Themen, Auftritte und Kampagnen beobachtet?","Wie werden Erkenntnisse aus der Konkurrenzanalyse geprüft, dokumentiert, priorisiert und in Botschaften oder Maßnahmen übersetzt?","Gibt es Kriterien, wann eine Reaktion auf Aktivitäten der politischen Konkurrenz notwendig ist und wann Nicht-Reagieren die bessere Option ist?","Werden Gegenargumente und mögliche Reaktionen auf die eigene Kampagne vorab durchgespielt?","Inwieweit besteht im Bereich Konkurrenzanalyse und Umfeldbeobachtung konkreter Unterstützungsbedarf durch das KAH?"]},{"number":6,"title":"Narrativ, Themen und Botschaften, Programm","questions":["Wurde ein übergeordnetes, langfristig tragendes Narrativ erarbeitet, das die Kampagne trägt und wenn ja, wie und durch wen und wie lautet es in Grundzügen?","Gibt es eine Hauptbotschaft bzw. einen zentralen Kampagnenclaim, der das Narrativ übersetzt, und wenn ja, wie lautet er?","Wurden zentrale Themen der Kampagne festgelegt und wie lauten sie?","Inwiefern wurde sichergestellt, dass die wichtigsten Kampagnenthemen aus Wahlkontext, Wählerkenntnis und politischer Priorität abgeleitet und klar priorisiert sind?","Sind die Themen mit verständlichen, konkreten und belegbaren Kernbotschaften unterlegt?","Wer verantwortet das Programm, seine Abstimmung und die Beschlussfassung?","Inwieweit werden Mitglieder und externe Experten am Programmprozess beteiligt?","Gibt es einen verbindlichen Zeitplan für Entwurf, Prüfung, Beschluss und Veröffentlichung und wenn ja, was sieht er vor?","Inwieweit wurden Umfang und Formate des Programms festgelegt (Lang- und Kurzfassung, digitale Formate, Themenmaterialien)?","Wie werden Umsetzbarkeit, Finanzierung und fachliche Konsistenz der zentralen Vorschläge geprüft?","Gibt es zentrale Fakten, Belege, Antworten auf Einwände und einheitliche Freigaben für sensible Botschaften und Programminhalte?","Wie wird sichergestellt, dass Programm, Botschaften und öffentliche Auftritte des/der Spitzenkandidat/in konsistent sind?","Wo liegen absehbar Konfliktlinien zwischen Botschaften und Programminhalten des Landesverbands und der Bundes-CDU und wie soll damit umgegangen werden?","Inwieweit besteht im Bereich Narrativ, Programm, Themen und Botschaften konkreter Unterstützungsbedarf durch das KAH?"]},{"number":7,"title":"Spitzenkandidat/in","questions":["Wie werden Profil, öffentliche Wahrnehmung, Stärken und Risiken des/der Spitzenkandidat/in eingeschätzt und wie erfolgt die Analyse?","Wie werden Stärken gezielt genutzt und mögliche Schwächen oder Risikothemen vorbereitet?","Wie erfolgt die Vorbereitung auf Interviews, TV-Duelle, Debatten, Reden und Krisensituationen?","Wie wird der/die Spitzenkandidat/in regelmäßig zu Positionen und Botschaften der Bundes-CDU gebrieft?","Sind neben der/m Spitzenkandidaten/in weitere zentrale Köpfe für die Kampagne vorgesehen und wenn ja, mit welchen Aufgaben/Themenschwerpunkten?","Inwieweit besteht bei der Vorbereitung des/der Spitzenkandidaten/in konkreter Unterstützungsbedarf durch das KAH?"]}]},{"part":"C","title":"Umsetzung vor Ort und Mobilisierung","sections":[{"number":8,"title":"Kandidaten","questions":["Wer ist verantwortlich für den Kandidatenservice und wie sieht die personelle Aufstellung insgesamt aus?","Wie werden Kandidierende eingebunden, informiert und im Wahlkampf praktisch unterstützt?","Wie oft/regelmäßig, in welchen Formaten und mit welchen Inhalten finden Kandidatentreffen statt?","Gibt es für Kandidierende einheitliche Briefings, Materialzugänge, Ansprechpersonen und klare Freigabewege?","Welche Schulungsangebote sind für Kandidierende vorgesehen?","Welche Tools/Apps/digitale Plattformen sind explizit für Kandidatinnen und Kandidaten im Einsatz oder geplant?","Inwieweit besteht beim Kandidatenservice (etwa Schulungsangebote, die über Campus abgedeckt werden können) Unterstützungsbedarf durch das KAH?"]},{"number":9,"title":"Mitglieder, Freiwillige und Testimonials","questions":["Wie werden Mitglieder und lokale Parteistrukturen informiert, beteiligt und mobilisiert?","Sind Freiwilligenteams geplant, und sind Einsatzfelder, Betreuung und erreichbare Ziele definiert?","Ist die Rekrutierung von Freiwilligen durch das KAH (#eineUnion) gewünscht? Wenn ja: für welche Aufgaben, Regionen und Zeiträume?","Wie werden Kandidierende, Kreisverbände und Freiwillige geschult und mit verständlichen Einsatzmaterialien versorgt?","Wie werden Kontakte, Rückmeldungen und häufige Anliegen aus dem Feld datenschutzkonform erfasst und an die Kampagnensteuerung zurückgespielt?","Sind Prominente oder Testimonials für die Kampagne vorgesehen, wenn ja, wer?","Wie werden Ansprache, Einverständnis und Nutzungsrechte bei der Einbindung von Prominenten/Testimonials organisiert sowie Reputationsrisiken geprüft?","Inwieweit besteht bei der Mobilisierung von Mitgliedern, Freiwilligen und Testimonials Unterstützungsbedarf durch das KAH?"]},{"number":10,"title":"Veranstaltungen und Touren","questions":["Welche Veranstaltungsformate sind vorgesehen, für welche Zielgruppen und mit welchem Zweck?","Ist eine Tour des/der Spitzenkandidat/in geplant, und wie werden Orte und Termine priorisiert?","Wer verantwortet Planung, Durchführung, Kommunikation, Sicherheit und Nachbereitung von Veranstaltungen?","Welche Erwartungen bestehen an den Parteivorsitzenden und die Generalsekretärin bzgl. der Teilnahme an Veranstaltungen, und sind Zuständigkeiten sowie Kapazitäten geklärt?","Sind Mittel und Kapazitäten für Mobilisierung, Barrierefreiheit, Technik und mögliche Ausweichlösungen eingeplant?","Wie wird ausgewertet, wen die Veranstaltungen erreicht haben und welche Erkenntnisse oder Folgekontakte entstanden sind?","Inwieweit besteht im Bereich Veranstaltungen und Touren Unterstützungsbedarf durch das KAH?"]},{"number":11,"title":"Medien-/Pressearbeit","questions":["Wer verantwortet die Gesamtkommunikation und spricht für Kandidat/in und Kampagne?","Ist eine enge Abstimmung mit der Pressestelle des KAH und den zuständigen Parteistellen sichergestellt?","Gibt es einen gemeinsamen Themen-, Presse- und Redaktionskalender mit Verantwortlichen und Freigabezeiten?","Welche wiederkehrenden Formate, z. B. Hintergrundgespräche, sind mit Medien und Journalisten geplant?","Wie stabil und umfangreich sind die Kontakte/Beziehungen zu Hauptstadtjournalisten?","Inwieweit besteht im Bereich Medien-/Pressearbeit Unterstützungsbedarf durch das KAH?"]}]},{"part":"D","title":"Integrierte Kommunikation und Kanäle","sections":[{"number":12,"title":"Mediaplanung","questions":["Wer verantwortet die Mediaplanung intern und welche externen Dienstleister sind dafür zuständig?","Wie werden Mittel und Zielgruppen auf OOH, Online, Mailings und weitere Kanäle verteilt, und anhand welcher Kriterien?","Inwieweit besteht bei der Mediaplanung Unterstützungsbedarf durch das KAH?"]},{"number":13,"title":"TV-/Radio-Spots","questions":["Sind TV- oder Radio-Spots vorgesehen? Wenn ja: Wer verantwortet Konzept, Produktion, Freigabe, Ausspielung, Zeitplan und Budget?","Sind Produktions-, Freigabe-, Liefer- und Schalttermine mit den Kampagnenphasen abgestimmt?","Inwieweit besteht beim Thema TV-/Radio-Spots Unterstützungsbedarf durch das KAH?"]},{"number":14,"title":"Werbemittel und Merchandiseartikel","questions":["Wer entwickelt, produziert, prüft und gibt politische Materialien frei (z. B. Flyer, Broschüren, Themenmaterialien)?","Welche politischen Materialien sind geplant und sind darunter besondere, innovative Formate?","Welche Streuartikel sind vorgesehen, und sind Ziel, Menge, Kosten und Verteilung geklärt?","Inwieweit besteht bei der Erarbeitung von Werbemitteln und Merchandiseartikeln Unterstützungsbedarf durch das KAH?"]},{"number":15,"title":"Social Media","questions":["Wer ist verantwortlich für den Bereich Social Media?","Welche Kanäle werden in Social Media bespielt, mit welcher Strategie, welchem Ziel und für welche Zielgruppen?","Wie sind Zuständigkeiten für Inhalt, Community Management, Moderation, Eskalation und Auswertung geregelt?","Werden die Kandidatinnen und Kandidaten bei Social Media gesondert unterstützt und wenn ja, wie und durch wen?","Inwieweit besteht im Bereich Social Media Unterstützungsbedarf durch das KAH?"]},{"number":16,"title":"Potenzialdaten – Haustürwahlkampf und Direct Mailings","questions":["Wer ist verantwortlich für die Anwendung und Verbreitung der vom KAH bereitgestellten Potenzialdaten?","Werden Potenzialdaten für Haustürwahlkampf eingesetzt und wie erfolgen Übermittlung der Daten an Kandidaten und Wahlkämpfer und Schulungen zur Anwendung?","Wer verantwortet den Bereich Haustürwahlkampf, mit welchem Team und welcher Zielsetzung?","Sind seitens des Landesverbandes potenzialgestützte Direct Mailings geplant? Wenn ja: für welche Zielgruppen, in welchem Umfang und zu welchen Versandterminen?","Ist vorgesehen, den KAH-Service für potenzialgestützte Direct Mailings für Kandidatinnen und Kandidaten zu nutzen und wie und wann erfolgt die Information dazu?","Inwieweit besteht bei Haustürwahlkampf und Direct Mailings Unterstützungsbedarf durch das KAH?"]},{"number":17,"title":"Digitale Tools und Plattformen (Tech Stack)","questions":["Wer ist verantwortlich für Aufbau und Pflege aller digitalen Tools und Plattformen?","Welche Tools und Plattformen von welchen Anbietern sind in die Kampagne integriert?","Welche strategischen Ziele werden mit der Bereitstellung und Anwendung der verschiedenen Tools und Plattformen verfolgt?","Inwieweit ist sichergestellt, dass die unterschiedlichen Tools und Plattformen untereinander kompatibel sind und miteinander verbunden werden?","Inwieweit besteht beim Thema Digitale Tools und Plattformen Unterstützungsbedarf durch das KAH?"]}]},{"part":"E","title":"Ressourcen und Risikovorsorge","sections":[{"number":18,"title":"Budget und Fundraising","questions":["Welches Gesamtbudget ist geplant und beschlossen, und welche Annahmen liegen der Kalkulation zugrunde?","Wie verteilt sich das Budget auf Aufgabenbereiche, Phasen und Kanäle?","Wie groß ist die aktuelle Deckungslücke, und wie wird sie fortlaufend prognostiziert?","Welche Fundraising-Maßnahmen, inkl. Ziel, Zuständigkeit, Zeitplan und rechtlicher Prüfung, sind vorgesehen?","Gibt es Soll-Ist-Kontrolle, Ausgabenfreigaben und Szenarien für Kostensteigerungen oder geringere Einnahmen?","Ist eine angemessene Reserve für unvorhergesehene Anforderungen eingeplant?","Inwieweit besteht beim Thema Budget/Fundraising Unterstützungsbedarf durch das KAH?"]},{"number":19,"title":"Recht, Sicherheit, Krisen- und Kontinuitätsplanung","questions":["Wer prüft die einschlägigen rechtlichen Anforderungen zu Datenschutz, Wahlwerbung, Finanzierung, Spenden, Transparenz und Nutzungsrechten?","Wer verantwortet den Bereich Informationssicherheit und wie sind Zuständigkeiten bei einem Datenvorfall geregelt?","Sind Eskalationswege und Entscheidungsbefugnisse für Krisen, Falschinformationen oder schwerwiegende öffentliche Vorwürfe festgelegt?","Gibt es abgestimmte Krisenkommunikation und einen Prozess zur schnellen Faktenprüfung?","Wie sind Ausfälle von Schlüsselpersonen, IT-Systemen oder Dienstleistern mit Vertretung und Ausweichlösung abgedeckt?","Inwieweit besteht beim Thema Recht, Sicherheit, Krisen- und Kontinuitätsplanung Unterstützungsbedarf durch das KAH?"]}]},{"part":"F","title":"Schlussphase, Wahltag und Zeit nach der Wahl","sections":[{"number":20,"title":"Schlussphase und Wahltag","questions":["Gibt es einen eigenen Ablauf- und Verantwortungsplan für die Schlussphase der Kampagne?","Sind lokale Ansprechpersonen, Schichten, Material, Transport und Kommunikationswege für die Schlussphase rechtzeitig festgelegt?","Gibt es einen eigenen Ablauf- und Verantwortungsplan für den Wahltag?","Inwiefern ist sichergestellt, dass am Wahltag Informationen aus den Wahlkreisen in der Wahlkampfzentrale zusammenlaufen?","Inwieweit besteht bei der Planung von Schlussphase und Wahltag Unterstützungsbedarf durch das KAH?"]},{"number":21,"title":"Wahlanalyse und Wissenstransfer","questions":["Sind eine Wahlanalyse und eine Evaluation des Wahlkampfes vorgesehen und wenn ja, wer ist verantwortlich (inkl. Zeitplan, klaren Fragestellungen und beteiligten internen wie externen Akteuren)?","Wie werden Materialien, Entscheidungen, Daten und Lessons Learned so dokumentiert, dass der Verband auch zukünftig darauf zugreifen kann?","Wie sind Übergaben geregelt, falls Wissensträger/innen in Regierung, Fraktion oder andere Beschäftigungen wechseln?","Wie ist sichergestellt, dass offene Verpflichtungen gegenüber Dienstleistern, Unterstützern und lokalen Parteistrukturen nach dem Wahltag nachverfolgt werden?","Inwieweit besteht bei Wahlanalyse und Wissenstransfer Unterstützungsbedarf durch das KAH?"]},{"number":22,"title":"Mögliche Regierungsbildung und Übergang","note":"Diesen Abschnitt nur ausfüllen, wenn eine Regierungsbildung realistisch und organisatorisch vorzubereiten ist. Er ist vom operativen Wahlkampf-Health-Check getrennt zu steuern.","questions":["Wie ist die frühzeitige Vorbereitung möglicher Sondierungs- und Koalitionsgespräche organisiert, und welche Vertraulichkeitsregeln gelten?","Wie sind Entscheidungswege und Schnittstellen zwischen Partei, Fraktion und möglicher Regierung geklärt?","Ist eine frühzeitige Organisations-, Zeit- und Personalplanung für eine mögliche Regierungsbildung vorgesehen (Abteilungen, Organigramme, Büros und Übergaben)?","Inwieweit besteht bei der Vorbereitung für Koalitionsverhandlungen und Regierungsbildung Unterstützungsbedarf durch das KAH?"]}]}];
+
+/* ---------- Grundgerüst ---------- */
+let nextId=0;
+for(const group of groups) for(const section of group.sections) section.items=section.questions.map(question=>({id:`q${++nextId}`,question}));
+const totalQuestions=nextId;
+const FORMAT='campaign-health-check-v2';
+const blankActions=()=>Array.from({length:5},(_,i)=>({priority:String(i+1),action:'',reference:'',owner:'',due:'',criterion:''}));
+const blankDecisions=()=>[{date:'',decision:'',owner:'',due:'',status:''}];
+const state={metadata:{},answers:{},actions:blankActions(),decisions:blankDecisions()};
+const checkList=document.getElementById('checklist');
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const same=(a,b)=>JSON.stringify(a??null)===JSON.stringify(b??null);
+const fmtTime=d=>new Date(d).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+/* ---------- Sync-Zustand ---------- */
+const params=new URLSearchParams(location.hash.slice(1));
+const token=params.get('t')||'';
+const remoteConfigured=!!(CONFIG.supabaseUrl&&CONFIG.supabaseKey);
+const sync={mode:'local',version:0,base:null,viewToken:'',dirty:false,saving:false,timer:null,retry:0,lastSaved:null,label:''};
+const LOCAL_KEY=token?`chc-backup-${token.slice(0,12)}`:'chc-local';
+
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),3200);}
+function setStatus(st,label){const el=$('syncStatus');el.dataset.state=st;$('syncLabel').textContent=label;$('retryBtn').classList.toggle('hidden',st!=='error');}
+function banner(kind,html){$('bannerHost').innerHTML=html?`<div class="banner ${kind}" role="status"><div>${html}</div></div>`:'';}
+
+/* ---------- Rendering ---------- */
+function statusOptions(current){return [['','Noch unbewertet'],['green','Grün'],['yellow','Gelb'],['red','Rot'],['na','Grau / nicht zutreffend']].map(([v,l])=>`<option value="${v}" ${current===v?'selected':''}>${l}</option>`).join('');}
+function renderChecklist(){
+  const openParts=new Set([...document.querySelectorAll('details.part[open]')].map(d=>d.dataset.part));
+  const openTopics=new Set([...document.querySelectorAll('details.topic[open]')].map(d=>d.dataset.topic));
+  const first=!checkList.children.length;
+  let index=0;
+  checkList.innerHTML=groups.map((group,gi)=>{
+    const count=group.sections.reduce((n,s)=>n+s.items.length,0);
+    return `<details class="part" ${first||openParts.has(group.part)?'open':''} data-part="${esc(group.part)}"><summary><span class="part-letter" aria-hidden="true">${esc(group.part)}</span><span class="part-name"><small>Teil ${esc(group.part)}</small>${esc(group.title)}</span><span class="part-count"><span data-part-count>${count} Leitfragen</span><span class="mini-bar" data-mini aria-hidden="true"></span></span></summary><div class="part-content">${group.note?`<p class="small-note">${esc(group.note)}</p>`:''}${group.sections.map((section,si)=>`<details class="topic" ${openTopics.has(`${gi}-${si}`)?'open':''} data-topic="${gi}-${si}"><summary><span><span class="topic-num">${section.number??''}</span>${esc(section.title)}</span><span class="topic-meta" data-topic-meta>${section.items.length} Fragen</span></summary><div class="topic-body">${section.items.map(item=>{
+      index++;
+      const a=state.answers[item.id]||{};const cur=a.status||'';
+      return `<article class="check-card status-${cur||'open'}" data-qid="${item.id}" data-question="${esc(item.question.toLocaleLowerCase('de'))}"><div class="question-line"><span class="q-index">${String(index).padStart(3,'0')}</span><div class="question">${esc(item.question)}</div><div class="status-wrap"><label><span class="field-label">Ampelstatus</span><select class="status-select ${cur?'v-'+cur:''}" data-field="status" aria-label="Ampelstatus für Frage ${index}">${statusOptions(cur)}</select></label></div></div><div class="field-grid"><label><span class="field-label">Sachstand</span><textarea data-field="evidence" rows="2" placeholder="Sachlage, Quelle und Aktualität festhalten …">${esc(a.evidence||'')}</textarea></label><label><span class="field-label">Bei Gelb oder Rot: nächste Schritte / Maßnahmen / Fristen</span><textarea data-field="action" rows="2" placeholder="Nächster Schritt, verantwortliche Person, Zieltermin …">${esc(a.action||'')}</textarea></label></div></article>`;
+    }).join('')}</div></details>`).join('')}</div></details>`;
+  }).join('');
+  applyReadonly();updateFilter();updateStats();
+}
+function renderLogs(){
+  const field=(label,key,value,ta=false)=>`<label><span class="field-label">${label}</span>${ta?`<textarea data-log-field="${key}" rows="2">${esc(value)}</textarea>`:`<input data-log-field="${key}" value="${esc(value)}">`}</label>`;
+  $('actions').innerHTML=state.actions.map((r,i)=>`<div class="log-card" data-log-type="actions" data-log-index="${i}"><div class="log-card-head"><strong>Maßnahme ${i+1}</strong><button type="button" class="remove-row edit-only" data-remove="actions" data-index="${i}">Entfernen</button></div><div class="log-grid">${field('Priorität','priority',r.priority)}${field('Maßnahme / Entscheidung','action',r.action,true)}${field('Bezug (Abschnitt / Frage)','reference',r.reference,true)}${field('Verantwortlich','owner',r.owner)}${field('Zieltermin','due',r.due)}${field('Erfolgskriterium / Status','criterion',r.criterion,true)}</div></div>`).join('');
+  $('decisions').innerHTML=state.decisions.map((r,i)=>`<div class="log-card" data-log-type="decisions" data-log-index="${i}"><div class="log-card-head"><strong>Entscheidung ${i+1}</strong><button type="button" class="remove-row edit-only" data-remove="decisions" data-index="${i}">Entfernen</button></div><div class="log-grid">${field('Datum','date',r.date)}${field('Entscheidung','decision',r.decision,true)}${field('Umsetzungsverantwortung','owner',r.owner)}${field('Termin','due',r.due)}${field('Offen / erledigt','status',r.status)}</div></div>`).join('');
+  applyReadonly();
+}
+function renderMeta(){document.querySelectorAll('[data-meta]').forEach(el=>{if(el!==document.activeElement)el.value=state.metadata[el.dataset.meta]||'';});updateStoerer();}
+function applyReadonly(){
+  const ro=sync.mode==='view';document.body.classList.toggle('readonly',ro);
+  document.querySelectorAll('main textarea, main input:not([type=search]):not([type=file]), main select.status-select').forEach(el=>{if(el.tagName==='SELECT')el.disabled=ro;else el.readOnly=ro;});
+}
+function updateStats(){
+  const counts={green:0,yellow:0,red:0,na:0};
+  for(const a of Object.values(state.answers)) if(a&&counts[a.status]!==undefined)counts[a.status]++;
+  const rated=counts.green+counts.yellow+counts.red+counts.na;
+  $('progressText').textContent=`${rated} / ${totalQuestions}`;
+  for(const k of Object.keys(counts))$(`${k}Count`).textContent=counts[k];
+  const pct=totalQuestions?Math.round(100*rated/totalQuestions):0;
+  $('progressBar').style.width=`${pct}%`;
+  document.querySelector('[role="progressbar"]').setAttribute('aria-valuenow',String(pct));
+  const col={green:'var(--st-green)',yellow:'var(--st-yellow)',red:'var(--st-red)',na:'var(--st-na)'};
+  groups.forEach((group,gi)=>{
+    const c={green:0,yellow:0,red:0,na:0};let n=0;
+    group.sections.forEach((s,si)=>{const sc={green:0,yellow:0,red:0,na:0};s.items.forEach(it=>{n++;const st=state.answers[it.id]?.status;if(c[st]!==undefined){c[st]++;sc[st]++;}});
+      const meta=checkList.querySelector(`[data-topic="${gi}-${si}"] [data-topic-meta]`);
+      if(meta){const r=sc.green+sc.yellow+sc.red+sc.na;meta.innerHTML=`${['red','yellow','green','na'].filter(k=>sc[k]).map(k=>`<i class="pip" style="background:${col[k]}" title="${sc[k]}"></i>`).join('')} ${r} / ${s.items.length} bewertet`;}
+    });
+    const part=checkList.querySelector(`details.part[data-part="${CSS.escape(group.part)}"]`);if(!part)return;
+    const r=c.green+c.yellow+c.red+c.na;part.querySelector('[data-part-count]').textContent=`${r} / ${n} bewertet`;
+    part.querySelector('[data-mini]').innerHTML=['green','yellow','red','na'].map(k=>c[k]?`<i style="width:${100*c[k]/n}%;background:${col[k]}"></i>`:'').join('');
+  });
+}
+function updateFilter(){
+  const query=$('search').value.trim().toLocaleLowerCase('de');
+  const status=$('statusFilter').value;let visible=0;
+  document.querySelectorAll('.topic').forEach(topic=>{
+    let inTopic=0;const tText=topic.querySelector('summary').textContent.toLocaleLowerCase('de');const pText=topic.closest('.part').querySelector(':scope > summary').textContent.toLocaleLowerCase('de');
+    topic.querySelectorAll('.check-card').forEach(card=>{
+      const sel=state.answers[card.dataset.qid]?.status||'';
+      const textMatch=!query||(card.dataset.question||'').includes(query)||tText.includes(query)||pText.includes(query);
+      const statusMatch=status==='all'||(status==='unrated'?!sel:sel===status);
+      const show=textMatch&&statusMatch;card.classList.toggle('hidden',!show);if(show){inTopic++;visible++;}
+    });
+    topic.classList.toggle('hidden',inTopic===0);if((query||status!=='all')&&inTopic>0)topic.open=true;
+  });
+  document.querySelectorAll('.part').forEach(part=>{const has=[...part.querySelectorAll('.topic')].some(t=>!t.classList.contains('hidden'));part.classList.toggle('hidden',!has);if((query||status!=='all')&&has)part.open=true;});
+  $('noResults').style.display=visible?'none':'block';
+}
+function parseDate(s){const m=String(s||'').match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);const iso=String(s||'').match(/(\d{4})-(\d{2})-(\d{2})/);return iso?new Date(+iso[1],+iso[2]-1,+iso[3]):null;}
+function updateStoerer(){
+  const d=parseDate(state.metadata['Wahltermin']);const el=$('stoererText');
+  if(d){const today=new Date();today.setHours(0,0,0,0);const days=Math.round((d-today)/864e5);
+    if(days>1){el.innerHTML=`noch<b>${days.toLocaleString('de-DE')}</b>Tage bis zur Wahl`;return;}
+    if(days===1){el.innerHTML=`<b>1</b>Tag bis zur Wahl`;return;}
+    if(days===0){el.innerHTML=`<b>Heute</b>ist Wahltag`;return;}}
+  el.innerHTML=`<b>${totalQuestions}</b>Leit&shy;fragen`;
+}
+function updateCardInPlace(card){
+  const a=state.answers[card.dataset.qid]||{};
+  card.querySelectorAll('[data-field]').forEach(el=>{const v=a[el.dataset.field]||'';if(el!==document.activeElement&&el.value!==v)el.value=v;});
+  const sel=card.querySelector('.status-select');sel.className=`status-select ${a.status?'v-'+a.status:''}`;
+  card.className=`check-card status-${a.status||'open'}`+(card.classList.contains('hidden')?' hidden':'');
+}
+function refreshAll(){renderMeta();checkList.querySelectorAll('.check-card').forEach(updateCardInPlace);
+  const logFocused=document.activeElement&&document.activeElement.closest('.log-list');if(!logFocused)renderLogs();updateStats();updateFilter();}
+
+/* ---------- Daten ---------- */
+function getData(){return {format:FORMAT,metadata:clone(state.metadata),answers:clone(state.answers),actions:clone(state.actions),decisions:clone(state.decisions)};}
+function setData(d){
+  state.metadata=d&&typeof d.metadata==='object'&&d.metadata?{...d.metadata}:{};
+  state.answers=d&&typeof d.answers==='object'&&d.answers?{...d.answers}:{};
+  state.actions=Array.isArray(d?.actions)?d.actions:blankActions();
+  state.decisions=Array.isArray(d?.decisions)?d.decisions:blankDecisions();
+}
+/* Feldweises Zusammenführen: lokale Änderungen seit dem letzten Sync gewinnen, alles andere kommt vom Server */
+function merge(base,local,server){
+  base=base||{};const out={format:FORMAT,metadata:{},answers:{},actions:null,decisions:null};
+  const mk=new Set([...Object.keys(base.metadata||{}),...Object.keys(local.metadata||{}),...Object.keys(server.metadata||{})]);
+  for(const k of mk){const b=(base.metadata||{})[k]??'',l=(local.metadata||{})[k]??'',s=(server.metadata||{})[k]??'';out.metadata[k]=l!==b?l:s;}
+  const ak=new Set([...Object.keys(base.answers||{}),...Object.keys(local.answers||{}),...Object.keys(server.answers||{})]);
+  for(const id of ak){const b=(base.answers||{})[id]||{},l=(local.answers||{})[id]||{},s=(server.answers||{})[id]||{};const r={};
+    for(const f of new Set([...Object.keys(b),...Object.keys(l),...Object.keys(s)])){const bv=b[f]??'',lv=l[f]??'';r[f]=lv!==bv?lv:(s[f]??'');}
+    if(Object.values(r).some(v=>v))out.answers[id]=r;}
+  for(const key of ['actions','decisions'])out[key]=!same(local[key],base[key])?local[key]:(server[key]||local[key]);
+  return out;
+}
+
+/* ---------- Supabase-RPC ---------- */
+async function rpc(fn,args){
+  const headers={'Content-Type':'application/json','apikey':CONFIG.supabaseKey};
+  if(CONFIG.supabaseKey.startsWith('eyJ'))headers.Authorization='Bearer '+CONFIG.supabaseKey;
+  const res=await fetch(`${CONFIG.supabaseUrl.replace(/\/$/,'')}/rest/v1/rpc/${fn}`,{method:'POST',headers,body:JSON.stringify(args)});
+  const body=await res.json().catch(()=>null);
+  if(!res.ok){const e=new Error(body?.message||`Serverfehler (${res.status})`);e.status=res.status;e.auth=body?.code==='28000';throw e;}
+  return body;
+}
+
+/* ---------- Speichern ---------- */
+function markDirty(){
+  if(sync.mode==='view')return;
+  store.set(LOCAL_KEY,JSON.stringify({savedAt:new Date().toISOString(),data:getData()}));
+  if(sync.mode!=='edit'){setStatus('local','Lokaler Modus · im Browser zwischengespeichert');return;}
+  sync.dirty=true;setStatus('dirty','Ungespeicherte Änderungen …');
+  clearTimeout(sync.timer);sync.timer=setTimeout(save,1200);
+}
+async function save(){
+  if(sync.mode!=='edit'||!sync.dirty)return;
+  if(sync.saving){clearTimeout(sync.timer);sync.timer=setTimeout(save,600);return;}
+  sync.saving=true;sync.dirty=false;setStatus('saving','Speichert …');
+  const sent=getData();
+  try{
+    let res=await rpc('hc_save',{p_token:token,p_data:sent,p_version:sync.version});
+    if(!res.ok&&res.conflict){
+      const merged=merge(sync.base,sent,res.data||{});
+      const local=getData();
+      const merged2=merge(sent,local,merged); // Eingaben während des Requests erhalten
+      setData(merged2);refreshAll();
+      res=await rpc('hc_save',{p_token:token,p_data:merged,p_version:res.version});
+      if(!res.ok){sync.dirty=true;clearTimeout(sync.timer);sync.timer=setTimeout(save,300);return;}
+      toast('Änderungen anderer Bearbeiter wurden übernommen.');
+      sync.base=merged;
+      if(!same(merged2,merged))sync.dirty=true;
+    }else{sync.base=sent;}
+    sync.version=res.version;sync.lastSaved=res.updated_at;sync.retry=0;
+    if(!same(getData(),sync.base))sync.dirty=true;
+    setStatus(sync.dirty?'dirty':'saved',sync.dirty?'Ungespeicherte Änderungen …':`Gespeichert · ${fmtTime(res.updated_at)}`);
+    if(sync.dirty){clearTimeout(sync.timer);sync.timer=setTimeout(save,800);}
+  }catch(err){
+    sync.dirty=true;
+    if(err.auth){setStatus('error','Bearbeitungslink ungültig');banner('error','<strong>Speichern nicht möglich.</strong> Der Bearbeitungslink ist ungültig oder wurde gesperrt. Ihre Eingaben bleiben in diesem Browser gesichert – bitte exportieren und beim KAH einen neuen Link anfordern.');}
+    else{sync.retry++;const wait=Math.min(30000,2000*2**Math.min(sync.retry,4));setStatus('error',`Nicht gespeichert – neuer Versuch in ${Math.round(wait/1000)} s`);clearTimeout(sync.timer);sync.timer=setTimeout(save,wait);}
+  }finally{sync.saving=false;}
+}
+/* Regelmäßig Änderungen anderer abholen */
+async function poll(){
+  if(document.hidden||sync.saving||sync.dirty||!(sync.mode==='edit'||sync.mode==='view'))return;
+  try{const r=await rpc('hc_get',{p_token:token});
+    if(r.version!==sync.version&&!sync.dirty&&!sync.saving){
+      const merged=sync.mode==='edit'?merge(sync.base,getData(),r.data||{}):r.data;
+      setData(merged);sync.base=clone(r.data||{});sync.version=r.version;refreshAll();
+      setStatus(sync.mode==='view'?'view':'saved',(sync.mode==='view'?'Leseansicht · Stand ':'Aktualisiert · ')+fmtTime(r.updated_at));
+    }}catch(e){}
+}
+
+/* ---------- Start ---------- */
+async function init(){
+  if(remoteConfigured&&token){
+    setStatus('saving','Lädt …');
+    try{
+      const r=await rpc('hc_get',{p_token:token});
+      sync.mode=r.mode;sync.version=r.version;sync.viewToken=r.view_token||'';sync.label=r.label||'';
+      setData(r.data||{});sync.base=clone(getData());
+      // Lokale, nicht gespeicherte Sicherung aus früherer Sitzung anbieten
+      const bak=JSON.parse(store.get(LOCAL_KEY)||'null');
+      if(r.mode==='edit'&&bak&&bak.data&&new Date(bak.savedAt)>new Date(r.updated_at)&&!same(bak.data,r.data)){
+        banner('info',`<strong>Nicht gespeicherte Eingaben gefunden</strong> (Stand ${fmtTime(bak.savedAt)}). <button class="btn gold" type="button" id="restoreBak" style="margin-left:8px">Übernehmen</button> <button class="btn" type="button" id="dropBak">Verwerfen</button>`);
+        $('restoreBak').onclick=()=>{setData(merge(sync.base,bak.data,sync.base));refreshAll();banner();markDirty();};
+        $('dropBak').onclick=()=>{store.set(LOCAL_KEY,'');banner();};
+      }
+      $('syncCheck').textContent=sync.label||'';
+      if(r.mode==='view'){setStatus('view',`Leseansicht · Stand ${fmtTime(r.updated_at)}`);banner('info','<strong>Leseansicht.</strong> Dieser Link erlaubt nur das Ansehen. Änderungen nimmt das Kampagnenteam über den Bearbeitungslink vor.');}
+      else{setStatus('saved',`Gespeichert · ${fmtTime(r.updated_at)}`);$('shareBtn').classList.remove('hidden');}
+      setInterval(poll,30000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll();});
+    }catch(err){
+      sync.mode='local';setStatus('error',err.auth?'Link ungültig':'Keine Verbindung');
+      banner('error',err.auth?'<strong>Dieser Link ist ungültig</strong> oder der Check wurde gelöscht. Bitte den Link prüfen oder beim KAH einen neuen anfordern.':'<strong>Keine Verbindung zur Datenbank.</strong> Die Seite arbeitet vorerst lokal; Eingaben werden im Browser zwischengespeichert. Bitte später neu laden.');
+      loadLocal();
+    }
+  }else{
+    loadLocal();
+    if(remoteConfigured){$('createPanel').classList.remove('hidden');setStatus('local','Kein Check geöffnet · Eingaben nur lokal');}
+    else setStatus('local','Lokaler Modus · Supabase nicht konfiguriert');
+  }
+  renderChecklist();renderLogs();renderMeta();
+}
+function loadLocal(){const bak=JSON.parse(store.get(LOCAL_KEY)||'null');if(bak&&bak.data)setData(bak.data);}
+
+/* ---------- Ereignisse ---------- */
+function onFieldInput(e){
+  const card=e.target.closest('.check-card');
+  if(card&&e.target.dataset.field){const a=state.answers[card.dataset.qid]||{};a[e.target.dataset.field]=e.target.value;state.answers[card.dataset.qid]=a;
+    if(e.target.dataset.field==='status'){updateCardInPlace(card);updateStats();updateFilter();}markDirty();return;}
+  const row=e.target.closest('[data-log-type]');
+  if(row&&e.target.dataset.logField){state[row.dataset.logType][Number(row.dataset.logIndex)][e.target.dataset.logField]=e.target.value;markDirty();return;}
+  if(e.target.dataset.meta!==undefined){state.metadata[e.target.dataset.meta]=e.target.value;if(e.target.dataset.meta==='Wahltermin')updateStoerer();if(e.target.dataset.meta==='Bundesland / Wahl'&&sync.mode==='edit')$('syncCheck').textContent=e.target.value;markDirty();}
+}
+document.addEventListener('input',e=>{if(e.target.tagName!=='SELECT')onFieldInput(e);});
+document.addEventListener('change',e=>{if(e.target.tagName==='SELECT'&&e.target.dataset.field)onFieldInput(e);});
+$('search').addEventListener('input',updateFilter);
+$('statusFilter').addEventListener('change',updateFilter);
+$('openAll').addEventListener('click',()=>document.querySelectorAll('details.part,details.topic').forEach(d=>d.open=true));
+$('closeAll').addEventListener('click',()=>document.querySelectorAll('details.topic').forEach(d=>d.open=false));
+$('printBtn').addEventListener('click',()=>{$('logDetails').open=true;window.print();});
+$('addAction').addEventListener('click',()=>{state.actions.push({priority:String(state.actions.length+1),action:'',reference:'',owner:'',due:'',criterion:''});renderLogs();markDirty();});
+$('addDecision').addEventListener('click',()=>{state.decisions.push({date:'',decision:'',owner:'',due:'',status:''});renderLogs();markDirty();});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-remove]');if(!b||sync.mode==='view')return;const i=Number(b.dataset.index);state[b.dataset.remove].splice(i,1);renderLogs();markDirty();});
+$('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({...getData(),exportedAt:new Date().toISOString()},null,2)],{type:'application/json'});
+  const name=(state.metadata['Bundesland / Wahl']||'campaign-health-check').toLocaleLowerCase('de').replace(/[^a-z0-9äöüß]+/g,'-').replace(/^-|-$/g,'');
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`${name}-antworten.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$('importFile').addEventListener('change',async e=>{
+  const file=e.target.files&&e.target.files[0];if(!file)return;
+  try{const data=JSON.parse(await file.text());if(data.format!==FORMAT)throw new Error('Die Datei passt nicht zu diesem Health Check.');
+    if(sync.mode==='edit'&&!confirm('Import ersetzt den aktuellen Stand dieses Checks für alle Bearbeitenden. Fortfahren?'))return;
+    setData(data);renderChecklist();renderLogs();renderMeta();markDirty();toast('Antworten importiert.');
+  }catch(err){toast(err.message||'Die Datei konnte nicht importiert werden.');}
+  finally{e.target.value='';}
+});
+$('createBtn').addEventListener('click',async()=>{
+  const label=$('createLabel').value.trim()||state.metadata['Bundesland / Wahl']||'';const key=$('createKey').value.trim();
+  if(!key){toast('Bitte Anlage-Schlüssel eingeben.');return;}
+  $('createBtn').disabled=true;
+  try{if(label&&!state.metadata['Bundesland / Wahl'])state.metadata['Bundesland / Wahl']=label;
+    const r=await rpc('hc_create',{p_label:label,p_create_key:key,p_data:getData()});
+    store.set('chc-local','');try{sessionStorage.setItem('chc-show-share','1')}catch(e){}location.hash='t='+r.edit_token;
+  }catch(err){toast(err.auth?'Anlage-Schlüssel ungültig.':`Anlegen fehlgeschlagen: ${err.message}`);}
+  finally{$('createBtn').disabled=false;}
+});
+function openShare(){
+  const base=location.href.split('#')[0];
+  $('editLink').value=`${base}#t=${token}`;$('viewLink').value=`${base}#t=${sync.viewToken}`;
+  $('editLinkWrap').classList.toggle('hidden',sync.mode!=='edit');
+  $('shareDialog').showModal();
+}
+$('shareBtn').addEventListener('click',openShare);
+$('shareClose').addEventListener('click',()=>$('shareDialog').close());
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',async()=>{const inp=$(b.dataset.copy);try{await navigator.clipboard.writeText(inp.value);toast('Link kopiert.');}catch(e){inp.select();document.execCommand&&document.execCommand('copy');toast('Link markiert – mit Strg/⌘+C kopieren.');}}));
+$('retryBtn').addEventListener('click',()=>{sync.retry=0;clearTimeout(sync.timer);save();});
+window.addEventListener('hashchange',()=>location.reload());
+window.addEventListener('beforeunload',e=>{if(sync.mode==='edit'&&(sync.dirty||sync.saving)){e.preventDefault();e.returnValue='';}});
+
+init().then(()=>{try{if(sessionStorage.getItem('chc-show-share')){sessionStorage.removeItem('chc-show-share');if(sync.mode==='edit')openShare();}}catch(e){}});
+</script>
+</body>
+</html>
