@@ -12,6 +12,8 @@ Interaktive Checkliste (6 Teile, 22 Fragenblöcke, 141 Leitfragen) für Landtags
 |---|---|
 | `index.html` | Die komplette Anwendung (HTML, CSS, JS in einer Datei) |
 | `config.js` | Supabase-URL und öffentlicher Key |
+| `impressum.html`, `datenschutz.html` | Impressum und Datenschutzhinweise (Datenschutz als Entwurf, vor Go-live vom DSB freigeben) |
+| `assets/` | Lokal eingebundene Schriften (Inter, IBM Plex Serif, SIL OFL) und Styles der Rechtstexte – keine Verbindung zu Google Fonts |
 | `supabase/migrations/…_health_check.sql` | Tabellen, Zugriffsschutz, API-Funktionen |
 | `.github/workflows/pages.yml` | Automatische Veröffentlichung auf GitHub Pages |
 

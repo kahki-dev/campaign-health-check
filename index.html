@@ -5,12 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#52b7c1">
 <meta name="robots" content="noindex,nofollow">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://*.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Campaign Health Check</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/fonts.css">
 <style>
 /* ============ CDU Corporate Design 2023 – Tokens ============ */
 :root{
@@ -193,7 +191,7 @@ body.readonly .edit-only{display:none!important}
 body.readonly textarea,body.readonly input:not([type=search]):not(.link-input),body.readonly .status-select{pointer-events:none;background:var(--page)!important}
 
 footer.foot{background:var(--blau);color:#cfd6dc;font:12.5px/1.5 var(--font-head)}
-footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer.foot a{color:#fff;text-decoration:underline;text-underline-offset:2px}footer.foot a:hover{color:var(--gold)}footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 
 @media(max-width:960px){.toolbar{grid-template-columns:1fr 190px}.toolbar-actions{grid-column:1/-1;justify-content:flex-start}.intro{grid-template-columns:1fr}.support-panel .cols{grid-template-columns:1fr}.stats{grid-template-columns:repeat(3,1fr)}.stats .s-prog{grid-column:1/-1}.stoerer{width:104px;height:104px;font-size:13px}.stoerer b{font-size:28px}.create-grid{grid-template-columns:1fr 1fr}.create-grid .btn{grid-column:1/-1}}
 @media(max-width:640px){.wrap{padding:0 16px 48px}.hero-inner{padding:18px 16px 34px}.brandbar{margin-bottom:30px;padding-right:100px}.stoerer{top:16px;right:16px;width:88px;height:88px;font-size:11px}.stoerer b{font-size:22px}.subline{margin-left:.6em}.syncbar-inner{padding:10px 16px}.sync-check{margin-left:0;flex-basis:100%;order:3}.panel{padding:16px}.meta-grid{grid-template-columns:1fr 1fr}.toolbar{position:static;grid-template-columns:1fr;gap:8px}.toolbar-actions .btn{flex:1 1 auto}.stats{grid-template-columns:repeat(2,1fr)}.question-line{grid-template-columns:30px minmax(0,1fr);gap:8px}.status-wrap{grid-column:2;max-width:240px}.field-grid{grid-template-columns:1fr;padding-left:38px}.part>summary{grid-template-columns:auto minmax(0,1fr) 18px;padding:13px 12px;gap:10px}.part>summary .part-count{display:none}.part-letter{width:36px;height:36px;font-size:18px}.part-name{font-size:1.05rem}.part-content{padding:0 10px 12px}.topic>summary{grid-template-columns:minmax(0,1fr) 18px;font-size:.95rem}.topic-meta{display:none}.log-grid{grid-template-columns:1fr 1fr}.check-card{padding:12px 10px}.create-grid{grid-template-columns:1fr}}
@@ -324,7 +322,7 @@ footer.foot .wrap{padding-top:22px;padding-bottom:26px;display:flex;justify-cont
 <footer class="foot">
   <div class="wrap">
     <span>CDU Deutschlands · Konrad-Adenauer-Haus · Strategische Kommunikation &amp; Kampagne</span>
-    <span>Vertraulich – nur für den internen Gebrauch</span>
+    <span class="foot-links"><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a> · Vertraulich – nur für den internen Gebrauch</span>
   </div>
 </footer>
 
